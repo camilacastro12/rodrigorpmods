@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>RodrigoRPmods Web — Animes y Juegos</title>
+<style>
+  :root{
+    --bg:#070707;
+    --panel:#0f0f0f;
+    --muted:#bdbdbd;
+    --accent1:#ff6f61;
+    --accent2:#ffb863;
+    --card:#141414;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;font-family:Inter, Arial, sans-serif;background:linear-gradient(180deg,#060606,var(--bg));color:#eee}
+  header{padding:18px 22px;background: linear-gradient(90deg, rgba(255,111,97,0.12), rgba(255,168,110,0.03));display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid rgba(255,255,255,0.03);}
+  .brand h1{margin:0;font-size:1.3rem;font-weight:800;background: linear-gradient(90deg,var(--accent1),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:0.3px;}
+  .brand small{display:block;color:var(--muted);font-size:0.9rem;margin-top:6px}
+  nav{display:flex; gap:10px; align-items:center}
+  .tab-btn{background:transparent;border:1px solid rgba(255,255,255,0.04);color:#ddd;padding:8px 12px;border-radius:10px;cursor:pointer;font-weight:700;}
+  .tab-btn.active{ background: linear-gradient(90deg,var(--accent1),var(--accent2)); color:#111; border:none; box-shadow:0 10px 30px rgba(255,111,97,0.10); }
+  .wrap{display:grid; grid-template-columns: 300px 1fr; gap:18px; padding:18px; height:calc(100vh - 110px);}
+  @media (max-width:920px){ .wrap{grid-template-columns:1fr; height:auto;padding-bottom:40px} }
+
+  /* SIDEBAR */
+  aside{ background:var(--panel); border-radius:12px; padding:16px; overflow:auto; border:1px solid rgba(255,255,255,0.02); box-shadow: 8px 12px 40px rgba(0,0,0,0.6); }
+  .sidebar-title{ font-weight:800; color:var(--accent1); font-size:1.05rem; margin-bottom:6px }
+  .sidebar-sub{ color:var(--muted); font-size:0.88rem; margin-bottom:14px }
+
+  /* ---------- SIDEBAR LIST ITEMS (centrado corregido) ---------- */
+  .anime-list{ display:flex; flex-direction:column; gap:8px }
+  .anime-item{
+    display:flex;
+    gap:10px;
+    align-items:center;           /* centra verticalmente los elementos en la fila */
+    padding:10px;
+    border-radius:8px;
+    cursor:pointer;
+    background: linear-gradient(180deg, rgba(255,255,255,0.01), transparent);
+    border:1px solid rgba(255,255,255,0.01);
+    min-height:64px;             /* evita saltos y mejora alineado */
+  }
+  .anime-item.active{ background: linear-gradient(90deg, rgba(255,111,97,0.08), rgba(255,160,122,0.03)); box-shadow:0 10px 20px rgba(0,0,0,0.6) }
+  .anime-thumb{ width:64px; height:48px; background:#222; border-radius:6px; flex:0 0 64px; overflow:hidden; display:flex;align-items:center;justify-content:center;color:#888;font-size:12px }
+  .anime-thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .anime-meta{ display:flex; flex-direction:column; justify-content:center; min-width:0; } /* centrado vertical del texto */
+  .anime-meta .title{ font-weight:700; color:#eaeaea; font-size:0.95rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:200px; }
+  .anime-meta .mini{ font-size:0.8rem; color:var(--muted); margin-top:3px; line-height:1; }
+  .sidebar-templates{ margin-top:12px; border-top:1px dashed rgba(255,255,255,0.03); padding-top:12px }
+  .tpl{ display:flex; gap:8px; align-items:center; padding:8px; border-radius:8px; background:transparent; color:var(--muted); border:1px dashed rgba(255,255,255,0.02) }
+
+  /* MAIN */
+  main{ background: transparent; overflow:auto }
+  .panel{ background: linear-gradient(180deg, rgba(255,255,255,0.01), transparent); padding:18px; border-radius:12px; border:1px solid rgba(255,255,255,0.02) }
+  .panel h2{ margin:0 0 6px;color:var(--accent2) }
+  .seasons{ display:flex; flex-direction:column; gap:12px; margin-top:12px }
+  .season{ background:var(--card); border-radius:10px; overflow:hidden; border:1px solid rgba(255,255,255,0.02) }
+  .season-header{ display:flex; align-items:center; justify-content:space-between; padding:12px 14px; cursor:pointer; user-select:none }
+  .season-title{ font-weight:800; color:var(--accent1) }
+  .season-sub{ color:var(--muted); font-size:0.88rem }
+  .season-toggle{ width:40px; height:36px; display:flex; align-items:center; justify-content:center; border-radius:8px; color:var(--accent1); font-weight:800; background:transparent; border:none; cursor:pointer }
+  .season-content{ max-height:0; overflow:hidden; transition:max-height .36s ease, padding .22s ease; padding:0 14px }
+  .season.open .season-content{ padding:12px 14px 18px 14px; max-height:2000px }
+  .chapter{ background:#121212; border-radius:8px; padding:12px; display:flex; flex-direction:column; gap:10px; margin-bottom:10px; border:1px solid rgba(255,255,255,0.02); }
+  .chapter h3{ margin:0; color:var(--accent2) }
+  .chapter .info{ color:var(--muted); font-size:0.9rem }
+  .controls{ display:flex; gap:8px; flex-wrap:wrap }
+  .controls button{ background:linear-gradient(90deg,var(--accent1),var(--accent2)); border:none; color:#111; padding:8px 12px; border-radius:8px; cursor:pointer; font-weight:700 }
+  .controls button.secondary{ background:#333; color:#fff; border:1px solid rgba(255,255,255,0.04) }
+
+  /* video-wrap: hidden by default, fade-in when shown */
+  .video-wrap{ margin-top:6px; background:#000; border-radius:8px; overflow:hidden; border:1px solid rgba(255,255,255,0.02); display:none; opacity:0; transform:translateY(6px); transition: opacity .36s ease, transform .36s ease; }
+  .video-wrap.visible{ display:block; opacity:1; transform:translateY(0); }
+
+  .video-wrap .embed-container { left: 0; width: 100%; height: 0; position: relative; padding-bottom: 56.25%; }
+  .video-wrap iframe{ position:absolute; top:0; left:0; width:100%; height:100%; border:0; display:block }
+  .drive-fallback{ padding:10px; background:#111; border-top:1px solid rgba(255,255,255,0.03); color:var(--muted); display:flex; gap:10px; align-items:center; justify-content:flex-start; }
+  .note{ color:var(--muted); font-size:0.85rem; margin-top:8px }
+  #games-panel{ display:none } #games-panel.active{ display:block }
+  @media (max-width:920px){ .video-wrap iframe{ height:44vh } aside{ order:2 } }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <h1>RodrigoRPmods Web</h1>
+    <small>Tu espacio de Animes y Juegos</small>
+  </div>
+
+  <nav>
+    <button id="tab-anime" class="tab-btn active">Anime RPmods</button>
+    <button id="tab-games" class="tab-btn">Juegos</button>
+  </nav>
+</header>
+
+<div class="wrap">
+  <aside>
+    <div class="sidebar-title">Animes Disponibles</div>
+    <div class="sidebar-sub">Explora nuestras plantillas y títulos</div>
+
+    <div class="anime-list" id="animeList"></div>
+
+    <div class="sidebar-templates">
+      <div style="color:var(--muted);font-weight:700;margin-bottom:8px">Redes Sociales</div>
+      <div class="tpl" style="flex-direction:column;align-items:flex-start;padding:10px;">
+        <div style="font-weight:700;color:#fff;margin-bottom:6px">Telegram</div>
+        <a href="https://t.me/animerpmods" target="_blank" style="color:var(--accent2);text-decoration:none">t.me/animerpmods</a>
+        <div style="height:8px"></div>
+
+        <div style="font-weight:700;color:#fff;margin-bottom:6px">Facebook</div>
+        <a href="https://facebook.com/Rodrigorpmodsfanedits" target="_blank" style="color:var(--accent2);text-decoration:none">Rodrigorpmodsfanedits</a>
+        <div style="height:8px"></div>
+
+        <div style="font-weight:700;color:#fff;margin-bottom:6px">TikTok</div>
+        <a href="https://www.tiktok.com/@rodrigorpmods" target="_blank" style="color:var(--accent2);text-decoration:none">@rodrigorpmods</a>
+        <div style="height:8px"></div>
+
+        <div style="font-weight:700;color:#fff;margin-bottom:6px">YouTube</div>
+        <a href="https://www.youtube.com/@rodrigorpmods" target="_blank" style="color:var(--accent2);text-decoration:none">@rodrigorpmods</a>
+        <div style="height:8px"></div>
+
+        <div style="font-weight:700;color:#fff;margin-bottom:6px">PayPal</div>
+        <a href="https://paypal.me/rodrigorpmods" target="_blank" style="color:var(--accent2);text-decoration:none">paypal.me/rodrigorpmods</a>
+      </div>
+    </div>
+  </aside>
+
+  <main>
+    <div id="panelAnime" class="panel">
+      <h2>Anime RPmods</h2>
+      <div class="note">Selecciona un anime a la izquierda. Las temporadas son desplegables; pulsa "Reproductor 01" para cargar el reproductor.</div>
+      <div id="animeDetail" style="margin-top:14px"></div>
+    </div>
+
+    <div id="games-panel" class="panel" style="margin-top:14px">
+      <h2>Juegos</h2>
+      <p class="note">Panel de juegos — aquí puedes añadir demos, enlaces o descargas.</p>
+    </div>
+  </main>
+</div>
+
+<script>
+(function(){
+  const animeListEl = document.getElementById('animeList');
+  const animeDetailEl = document.getElementById('animeDetail');
+
+  // New player URL (applied to Capítulos 01 y 02 and kept as template)
+  const PLAYER01 = 'https://rodrigorpmods.rpmlive.online/#assgjc';
+  const PLAYER02 = 'https://rodrigorpmods.rpmlive.online/#qyy5ic';
+
+  // Data
+  const animes = [
+    {
+      id:'quint',
+      title:'Las Quintillizas',
+      thumb:'https://images.justwatch.com/backdrop/241404078/s640/gotoubun-no-hanayome',
+      sub:'Sub Español',
+      formato:'BD RPmods',
+      calidad:'1080p',
+      seasons:[
+        {
+          id:'q-s1',
+          title:'Las quintillizas — Temporada 1',
+          summary:'Sub Español • BD RPmods',
+          chapters:[
+            {
+              id:'q1',
+              title:'Capítulo 01 y 02',
+              info:'BD RPmods — 1080p',
+              player: PLAYER01,
+              facebook: 'https://www.facebook.com/rodrigorpmodsfanedits/videos/go-toubun-no-hanayome-cap%C3%ADtulo-1-y-cap%C3%ADtulo-2-sub-espa%C3%B1ol-fanedit-especial-de-lo/2681562718873374/',
+              additionalPlayer: 'https://www.burstcloud.co/embed/e26685e0e94c3f13648e0fa29968af01af467c43f2e8cfe1e15f15905fbfddeb/GNH_CAP01RPMODS.mp4'
+            },
+            {
+              id:'q2',
+              title:'Capítulo 03 y 04',
+              info:'BD RPmods — 1080p',
+              player: PLAYER02,
+              facebook: 'https://www.facebook.com/rodrigorpmodsfanedits/videos/go-toubun-no-hanayome-cap%C3%ADtulo-3-y-cap%C3%ADtulo-4-sub-espa%C3%B1ol-fanedit-especial-de-lo/4348404222151302/'
+            }
+          ]
+        },
+        { id:'q-s2', title:'Las quintillizas — Temporada 2', summary:'Sub Español • BD RPmods', chapters:[ { id:'q2e1', title:'Capítulo 01', info:'Próximamente', player:'' } ] },
+        { id:'q-mv', title:'Las quintillizas — La película', summary:'Película — Sub Español • BD RPmods', chapters:[ { id:'qmv', title:'Película (BD)', info:'Próximamente', player:'' } ] }
+      ]
+    },
+
+    {
+      id:'konosuba',
+      title:'Konosuba',
+      thumb:'http://alpha.uscreencdn.com/images/categories/95567/big_Episodios-KonoSuba-Relleno-Orden-Cronologico.1631895312.jpg',
+      Doblaje:'Latino',
+      formato:'BD RPmods',
+      calidad:'720p',
+      seasons:[
+        {
+          id: 'k-s1',
+          title: 'Konosuba — Temporada 1',
+          summary: 'LATINO',
+          chapters: [
+		    {
+		      id: 'k1',
+			  title: 'Capítulo 01 y 02',
+			  info: 'BD RPmods — 720p',
+			  player: 'https://rodrigorpmods.rpmlive.online/#xuu3jf',
+			  facebook: 'https://www.facebook.com/rodrigorpmodsfanedits/videos/konosuba-t1-cap%C3%ADtulo-1-y-cap%C3%ADtulo-2-latino-fanedit-especial-de-los-capitulos-1-y/1349132193253928/',
+			  additionalPlayer: 'https://video-bog2-1.xx.fbcdn.net/o1/v/t2/f2/m366/AQP5y2cqsfls8F81FcyVWOz6aqymTozY3una78WM7S-nvJS-uVZbCQqGchhSWoBN9OyR6OomtQI--CJuifl5t3DopQlOzK8s9Yh3bXhstuZ9iQ.mp4?_nc_cat=104&_nc_sid=5e9851&_nc_ht=video-bog2-1.xx.fbcdn.net&_nc_ohc=f5NuUuWg42AQ7kNvwHn17CQ&efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5GQUNFQk9PSy4uQzMuMTI4MC5kYXNoX2gyNjQtYmFzaWMtZ2VuMl83MjBwIiwieHB2X2Fzc2V0X2lkIjoxMzQxMzY0NTU0MTQ4MTU0LCJhc3NldF9hZ2VfZGF5cyI6MCwidmlfdXNlY2FzZV9pZCI6MTAxMjIsImR1cmF0aW9uX3MiOjI3NDQsInVybGdlbl9zb3VyY2UiOiJ3d3cifQ%3D%3D&ccb=17-1&vs=8634848098462f4b&_nc_vs=HBksFQIYRWZiX2VwaGVtZXJhbC9BNDQzOTU0QTcyMkYwMUExOENDQThGNUQxRjJCRDNCQl9tdF8xX3ZpZGVvX2Rhc2hpbml0Lm1wNBUAAsgBEgAVAhhFZmJfZXBoZW1lcmFsLzY1NEYwNTVERkIxQUIxRkNCMDc5MTAzOTU5RkIzRDk0X210XzBfYXVkaW9fZGFzaGluaXQubXA0FQICyAESACgAGAAbAogHdXNlX29pbAExEnByb2dyZXNzaXZlX3JlY2lwZQExFQAAJvSkndzY_eEEFQIoAkMzLBdApXFn752yLRgZZGFzaF9oMjY0LWJhc2ljLWdlbjJfNzIwcBEAdQJllJ4BAA&_nc_gid=E77agmait_bbeMqU8ZcEpg&_nc_zt=28&oh=00_Afc_KJEWJXkYIas-Md4UkN8CKM8d0VfPRrJ52L_Akadwfw&oe=690B6B00&bitrate=786084&tag=dash_h264-basic-gen2_720p'
+		    }
+		  ]
+        },		  
+        { id:'k-s2', title:'Konosuba — Temporada 2', summary:'LATINO', chapters:[ { id:'k2', title:'Episodios (1..)', info:'Agregar enlaces', player:'' } ] },
+        { id:'k-mv', title:'Konosuba — Película', summary:'LATINO', chapters:[ { id:'kmv', title:'Película', info:'Agregar enlace', player:'' } ] },
+        { id:'k-s3', title:'Konosuba — Temporada 3', summary:'LATINO', chapters:[ { id:'k3', title:'Episodios (1..)', info:'Agregar enlaces', player:'' } ] }
+      ]
+    },
+
+    {
+      id:'rentaro',
+      title:'Las 100 novias de Rentarō',
+      thumb:'https://a.storyblok.com/f/178900/1920x1080/11e1a2c9cc/the-100-girlfriends-episode-12.png',
+      sub:'',
+      formato:'',
+      calidad:'',
+      seasons:[
+        { id:'r-s1', title:'Temporada 1', summary:'LATINO', chapters:[ { id:'r1', title:'Episodios (1..)', info:'Agregar enlaces', player:'' } ] },
+        { id:'r-s2', title:'Temporada 2', summary:'LATINO', chapters:[ { id:'r2', title:'Episodios (1..)', info:'Agregar enlaces', player:'' } ] }
+      ]
+    }
+  ];
+
+  let currentAnimeId = animes[0].id;
+  let currentTab = 'anime';
+
+  function buildSidebar(){
+    animeListEl.innerHTML = '';
+    animes.forEach((a, idx)=>{
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'anime-item';
+
+      const thumb = document.createElement('div'); thumb.className='anime-thumb';
+      if(a.thumb){
+        const img = document.createElement('img'); img.src = a.thumb; img.alt = a.title;
+        thumb.appendChild(img);
+      } else {
+        thumb.textContent = 'IMG';
+      }
+
+      const meta = document.createElement('div'); meta.className='anime-meta';
+      const title = document.createElement('div'); title.className='title'; title.textContent = a.title;
+      const mini = document.createElement('div'); mini.className='mini';
+      mini.textContent = a.seasons && a.seasons[0] ? a.seasons[0].summary : (a.sub ? a.sub : '');
+      meta.appendChild(title); meta.appendChild(mini);
+
+      btn.appendChild(thumb); btn.appendChild(meta);
+
+      if(!a.seasons || a.seasons.length === 0){
+        btn.style.opacity = '0.7'; btn.style.cursor = 'default';
+        btn.addEventListener('click', ()=> alert('Plantilla vacía. Agrega temporadas en el array `animes`.'));
+      } else {
+        btn.addEventListener('click', ()=> selectAnime(a.id));
+      }
+
+      animeListEl.appendChild(btn);
+    });
+    updateSidebarActive();
+  }
+
+  function updateSidebarActive(){
+    const items = animeListEl.querySelectorAll('.anime-item');
+    items.forEach(it => it.classList.remove('active'));
+    const idx = animes.findIndex(x => x.id === currentAnimeId);
+    if(idx >= 0 && animeListEl.children[idx]) animeListEl.children[idx].classList.add('active');
+  }
+
+  function selectAnime(id){
+    const anime = animes.find(x => x.id === id);
+    if(!anime) return;
+    currentAnimeId = id;
+    updateSidebarActive();
+
+    animeDetailEl.innerHTML = '';
+
+    // header block with thumb + meta
+    const header = document.createElement('div'); header.className='panel'; header.style.padding='12px';
+    const headerInner = document.createElement('div'); headerInner.style.display='flex'; headerInner.style.gap='12px'; headerInner.style.alignItems='center';
+    const imgBox = document.createElement('div'); imgBox.style.width='140px'; imgBox.style.height='80px'; imgBox.style.borderRadius='8px'; imgBox.style.overflow='hidden'; imgBox.style.background='#111';
+    if(anime.thumb){
+      const img = document.createElement('img'); img.src = anime.thumb; img.alt = anime.title; img.style.width='100%'; img.style.height='100%'; img.style.objectFit='cover';
+      imgBox.appendChild(img);
+    }
+    const txtBox = document.createElement('div');
+    const tTitle = document.createElement('div'); tTitle.style.fontWeight='800'; tTitle.style.color='var(--accent1)'; tTitle.style.fontSize='1.05rem'; tTitle.textContent = anime.title;
+    const tMeta = document.createElement('div'); tMeta.style.color='var(--muted)'; tMeta.style.marginTop='6px'; tMeta.textContent = (anime.sub ? 'Sub: ' + anime.sub + ' • ' : '') + (anime.formato ? anime.formato + (anime.calidad ? ' • ' : '') : '') + (anime.calidad ? anime.calidad : '');
+    txtBox.appendChild(tTitle); txtBox.appendChild(tMeta);
+    headerInner.appendChild(imgBox); headerInner.appendChild(txtBox);
+    header.appendChild(headerInner);
+    animeDetailEl.appendChild(header);
+
+    // seasons
+    const seasonsWrap = document.createElement('div'); seasonsWrap.className='seasons';
+    anime.seasons.forEach(season => {
+      const seasonEl = document.createElement('div'); seasonEl.className='season';
+
+      const sHeader = document.createElement('div'); sHeader.className='season-header'; sHeader.tabIndex = 0; sHeader.setAttribute('role','button');
+      const left = document.createElement('div');
+      const sTitle = document.createElement('div'); sTitle.className='season-title'; sTitle.textContent = season.title;
+      const sSub = document.createElement('div'); sSub.className='season-sub'; sSub.textContent = season.summary || '';
+      left.appendChild(sTitle); left.appendChild(sSub);
+      const toggle = document.createElement('button'); toggle.className='season-toggle'; toggle.type='button'; toggle.setAttribute('aria-expanded','false'); toggle.textContent = '▼';
+      sHeader.appendChild(left); sHeader.appendChild(toggle);
+
+      const content = document.createElement('div'); content.className='season-content';
+
+      if(season.chapters && season.chapters.length){
+        season.chapters.forEach(ch => {
+          const chap = document.createElement('div'); chap.className='chapter';
+          const h3 = document.createElement('h3'); h3.textContent = ch.title;
+          const info = document.createElement('div'); info.className='info'; info.textContent = ch.info || '';
+          const controls = document.createElement('div'); controls.className='controls';
+
+          if(ch.player){
+            const bPlay = document.createElement('button'); bPlay.className='btn-player'; bPlay.type='button'; bPlay.textContent='Reproductor 01';
+            bPlay.dataset.player = ch.player;
+            controls.appendChild(bPlay);
+          } else {
+            const b = document.createElement('button'); b.className='secondary'; b.disabled = true; b.textContent='Reproductor no disponible'; controls.appendChild(b);
+          }
+
+          // === ADDED: Ver en Facebook button if ch.facebook exists ===
+          if(ch.facebook){
+            const bFb = document.createElement('button');
+            bFb.className = 'btn-fb';
+            bFb.type = 'button';
+            bFb.textContent = 'Ver en Facebook';
+            bFb.addEventListener('click', ()=> {
+              window.open(ch.facebook, '_blank');
+            });
+            controls.appendChild(bFb);
+          }
+
+          // === ADDED: Button for additional player ===
+          if(ch.additionalPlayer){
+            const bPlay2 = document.createElement('button');
+            bPlay2.className = 'btn-player';
+            bPlay2.type = 'button';
+            bPlay2.textContent = 'Reproductor Adicional';
+            bPlay2.dataset.player = ch.additionalPlayer;
+            controls.appendChild(bPlay2);
+          }
+          // =========================================================
+
+          const videoWrap = document.createElement('div'); videoWrap.className='video-wrap';
+
+          // videoWrap hidden until user clicks; fallback created for each chapter
+          videoWrap.style.display = 'none';
+
+          const fallback = document.createElement('div');
+          fallback.className = 'drive-fallback';
+          fallback.style.display = 'none';
+          videoWrap.appendChild(fallback);
+
+          chap.appendChild(h3); chap.appendChild(info); chap.appendChild(controls); chap.appendChild(videoWrap);
+          content.appendChild(chap);
+        });
+      } else {
+        const empty = document.createElement('div'); empty.style.padding='12px'; empty.style.color='var(--muted)'; empty.textContent = 'No hay capítulos añadidos.';
+        content.appendChild(empty);
+      }
+
+      seasonEl.appendChild(sHeader); seasonEl.appendChild(content);
+      seasonsWrap.appendChild(seasonEl);
+    });
+
+    animeDetailEl.appendChild(seasonsWrap);
+
+    wireSeasonToggles(animeDetailEl);
+    wirePlayerButtons(animeDetailEl);
+
+    showTab('anime', { preserve:true });
+    animeDetailEl.scrollIntoView({behavior:'smooth', block:'start'});
+  }
+
+  function wireSeasonToggles(root){
+    const seasons = root.querySelectorAll('.season');
+    seasons.forEach(seasonEl => {
+      const header = seasonEl.querySelector('.season-header');
+      const toggle = seasonEl.querySelector('.season-toggle');
+
+      seasonEl.classList.remove('open'); toggle.textContent='▼'; toggle.setAttribute('aria-expanded','false');
+
+      function open(){ seasonEl.classList.add('open'); toggle.textContent='▲'; toggle.setAttribute('aria-expanded','true'); }
+      function close(){
+        seasonEl.classList.remove('open'); toggle.textContent='▼'; toggle.setAttribute('aria-expanded','false');
+        const wraps = seasonEl.querySelectorAll('.video-wrap');
+        wraps.forEach(w => {
+          const ifr = w.querySelector('iframe');
+          if(ifr && ifr.src) ifr.src = '';
+          w.classList.remove('visible');
+          setTimeout(()=> w.style.display = 'none', 360); // hide after animation
+        });
+      }
+
+      header.addEventListener('click', ()=> seasonEl.classList.contains('open') ? close() : open());
+      toggle.addEventListener('click', (e)=>{ e.stopPropagation(); seasonEl.classList.contains('open') ? close() : open(); });
+      header.addEventListener('keydown', (e)=>{ if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); header.click(); }});
+    });
+  }
+
+  function wirePlayerButtons(root){
+    // rebind to avoid double listeners
+    root.querySelectorAll('.btn-player').forEach(orig=>{
+      const clone = orig.cloneNode(true);
+      orig.parentNode.replaceChild(clone, orig);
+    });
+
+    root.querySelectorAll('.btn-player').forEach((btn)=>{
+      btn.addEventListener('click', ()=>{
+        const url = btn.dataset.player;
+        if(!url) return alert('Reproductor no disponible');
+        const chap = btn.closest('.chapter');
+        const wrap = chap.querySelector('.video-wrap');
+
+        // hide other wraps & stop their iframes
+        document.querySelectorAll('.video-wrap').forEach(w=>{
+          if(w !== wrap){
+            const ifr = w.querySelector('iframe');
+            if(ifr && ifr.src) ifr.src = '';
+            w.classList.remove('visible');
+            setTimeout(()=> w.style.display = 'none', 360);
+          }
+        });
+
+        // if already injected and visible, just scroll
+        if(wrap.querySelector('iframe')){
+          wrap.style.display = 'block';
+          requestAnimationFrame(()=> wrap.classList.add('visible'));
+          wrap.scrollIntoView({behavior:'smooth', block:'center'});
+          return;
+        }
+
+        // Inject the exact snippet using your PLAYER01 URL (keeps the 16:9 container)
+        const snippet = '<div class="embed-container" style="left: 0; width: 100%; height: 0; position: relative; padding-bottom: 56.25%;"><iframe src="' + url + '" style="top: 0; left: 0; width: 100%; height: 100%; position: absolute; border: 0;" allowfullscreen scrolling="no"></iframe></div>';
+
+        // Insert snippet and keep fallback element at end
+        wrap.innerHTML = snippet + wrap.innerHTML;
+
+        // show with animation
+        wrap.style.display = 'block';
+        setTimeout(()=> wrap.classList.add('visible'), 20);
+
+        // fallback button in case player doesn't load (uses direct URL)
+        let fallback = wrap.querySelector('.drive-fallback');
+        if(fallback && !fallback.querySelector('button')){
+          fallback.style.display = 'none';
+          const span = document.createElement('div');
+          span.textContent = 'Si el reproductor no carga, abrir en nueva pestaña:';
+          const openBtn = document.createElement('button');
+          openBtn.textContent = 'Abrir Reproductor';
+          openBtn.style.padding = '8px 12px';
+          openBtn.style.borderRadius = '8px';
+          openBtn.style.border = 'none';
+          openBtn.style.cursor = 'pointer';
+          openBtn.style.background = 'linear-gradient(90deg,var(--accent1),var(--accent2))';
+          openBtn.style.color = '#111';
+          openBtn.addEventListener('click', ()=> {
+            window.open(url, '_blank');
+          });
+          fallback.appendChild(span);
+          fallback.appendChild(openBtn);
+
+          // show fallback if iframe doesn't load in 6s
+          const iframe = wrap.querySelector('iframe');
+          const t = setTimeout(()=> { fallback.style.display = 'flex'; }, 6000);
+          if(iframe){
+            iframe.onload = function(){ clearTimeout(t); fallback.style.display = 'none'; iframe.onload = null; };
+          }
+        }
+
+        wrap.scrollIntoView({behavior:'smooth', block:'center'});
+      });
+    });
+  }
+
+  // Tabs wiring (keeps original behavior)
+  const tabAnimeBtn = document.getElementById('tab-anime');
+  const tabGamesBtn = document.getElementById('tab-games');
+  tabAnimeBtn.addEventListener('click', ()=> showTab('anime'));
+  tabGamesBtn.addEventListener('click', ()=> showTab('games'));
+  function showTab(tab, opts){
+    currentTab = tab;
+    if(tab === 'anime'){
+      tabAnimeBtn.classList.add('active'); tabGamesBtn.classList.remove('active');
+      document.getElementById('panelAnime').style.display = ''; document.getElementById('games-panel').style.display = 'none';
+      if(window.innerWidth >= 920) document.querySelector('aside').style.display = '';
+      if(!opts || !opts.preserve) selectAnime(currentAnimeId || animes[0].id);
+    } else {
+      tabGamesBtn.classList.add('active'); tabAnimeBtn.classList.remove('active');
+      document.getElementById('panelAnime').style.display = 'none'; document.getElementById('games-panel').style.display = '';
+      if(window.innerWidth >= 920) document.querySelector('aside').style.display = 'none';
+    }
+  }
+
+  // Init
+  buildSidebar();
+  selectAnime(currentAnimeId);
+
+  // responsive
+  window.addEventListener('resize', ()=> {
+    if(window.innerWidth < 920) document.querySelector('aside').style.display = '';
+    else {
+      if(currentTab === 'anime') document.querySelector('aside').style.display = '';
+      else document.querySelector('aside').style.display = 'none';
+    }
+  });
+
+  // expose for debug
+  window.__rpmods = { animes, selectAnime, showTab };
+})();
+</script>
+</body>
+</html>
