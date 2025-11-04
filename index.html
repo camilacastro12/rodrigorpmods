@@ -1,525 +1,1009 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>RodrigoRPmods Web — Animes y Juegos</title>
-<style>
-  :root{
-    --bg:#070707;
-    --panel:#0f0f0f;
-    --muted:#bdbdbd;
-    --accent1:#ff6f61;
-    --accent2:#ffb863;
-    --card:#141414;
-  }
-  *{box-sizing:border-box}
-  html,body{height:100%;margin:0;font-family:Inter, Arial, sans-serif;background:linear-gradient(180deg,#060606,var(--bg));color:#eee}
-  header{padding:18px 22px;background: linear-gradient(90deg, rgba(255,111,97,0.12), rgba(255,168,110,0.03));display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid rgba(255,255,255,0.03);}
-  .brand h1{margin:0;font-size:1.3rem;font-weight:800;background: linear-gradient(90deg,var(--accent1),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:0.3px;}
-  .brand small{display:block;color:var(--muted);font-size:0.9rem;margin-top:6px}
-  nav{display:flex; gap:10px; align-items:center}
-  .tab-btn{background:transparent;border:1px solid rgba(255,255,255,0.04);color:#ddd;padding:8px 12px;border-radius:10px;cursor:pointer;font-weight:700;}
-  .tab-btn.active{ background: linear-gradient(90deg,var(--accent1),var(--accent2)); color:#111; border:none; box-shadow:0 10px 30px rgba(255,111,97,0.10); }
-  .wrap{display:grid; grid-template-columns: 300px 1fr; gap:18px; padding:18px; height:calc(100vh - 110px);}
-  @media (max-width:920px){ .wrap{grid-template-columns:1fr; height:auto;padding-bottom:40px} }
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>RodrigoRPmods Web</title>
 
-  /* SIDEBAR */
-  aside{ background:var(--panel); border-radius:12px; padding:16px; overflow:auto; border:1px solid rgba(255,255,255,0.02); box-shadow: 8px 12px 40px rgba(0,0,0,0.6); }
-  .sidebar-title{ font-weight:800; color:var(--accent1); font-size:1.05rem; margin-bottom:6px }
-  .sidebar-sub{ color:var(--muted); font-size:0.88rem; margin-bottom:14px }
+  <style>
+    :root{
+      --bg:#0a0a0a;
+      --bg2:#111111;
+      --accent:#ff7a1a;       /* naranja oscuro principal */
+      --accent-2:#c75a12;     /* naranja más oscuro para hover/bordes */
+      --muted:#bfbfbf;
+      --text:#eeeeee;
+      --card:#151515;
+      --card-2:#1b1b1b;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --grad: radial-gradient(1200px 700px at 0% -10%, rgba(255,122,26,.15), transparent 60%),
+              radial-gradient(1000px 600px at 100% 110%, rgba(255,122,26,.10), transparent 60%),
+              linear-gradient(180deg, #0b0b0b, #0a0a0a 35%, #0a0a0a);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; color:var(--text); background: var(--grad), #000;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif;
+      line-height:1.4;
+    }
+    a{text-decoration:none;color:inherit}
+    button{font:inherit}
 
-  /* ---------- SIDEBAR LIST ITEMS (centrado corregido) ---------- */
-  .anime-list{ display:flex; flex-direction:column; gap:8px }
-  .anime-item{
-    display:flex;
-    gap:10px;
-    align-items:center;           /* centra verticalmente los elementos en la fila */
-    padding:10px;
-    border-radius:8px;
-    cursor:pointer;
-    background: linear-gradient(180deg, rgba(255,255,255,0.01), transparent);
-    border:1px solid rgba(255,255,255,0.01);
-    min-height:64px;             /* evita saltos y mejora alineado */
-  }
-  .anime-item.active{ background: linear-gradient(90deg, rgba(255,111,97,0.08), rgba(255,160,122,0.03)); box-shadow:0 10px 20px rgba(0,0,0,0.6) }
-  .anime-thumb{ width:64px; height:48px; background:#222; border-radius:6px; flex:0 0 64px; overflow:hidden; display:flex;align-items:center;justify-content:center;color:#888;font-size:12px }
-  .anime-thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
-  .anime-meta{ display:flex; flex-direction:column; justify-content:center; min-width:0; } /* centrado vertical del texto */
-  .anime-meta .title{ font-weight:700; color:#eaeaea; font-size:0.95rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:200px; }
-  .anime-meta .mini{ font-size:0.8rem; color:var(--muted); margin-top:3px; line-height:1; }
-  .sidebar-templates{ margin-top:12px; border-top:1px dashed rgba(255,255,255,0.03); padding-top:12px }
-  .tpl{ display:flex; gap:8px; align-items:center; padding:8px; border-radius:8px; background:transparent; color:var(--muted); border:1px dashed rgba(255,255,255,0.02) }
+    header{
+      position:sticky; top:0; z-index:20;
+      background: linear-gradient(90deg, rgba(255,122,26,.12), rgba(255,122,26,.02));
+      border-bottom:1px solid rgba(255,255,255,.06);
+      padding:14px 18px;
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      backdrop-filter: blur(6px);
+    }
+    .brand{display:flex; align-items:center; gap:10px; font-weight:800; letter-spacing:.2px;}
+    .brand .dot{width:10px; height:10px; border-radius:99px; background:var(--accent); box-shadow:0 0 20px rgba(255,122,26,.55);}
+    .title{font-size:1.05rem}
+    .tabs{display:flex; gap:8px; align-items:center; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.06); padding:4px; border-radius:12px;}
+    .tab{padding:8px 12px; border-radius:10px; cursor:pointer; user-select:none; transition: all .18s ease; color:#ddd;}
+    .tab.active{
+      background: linear-gradient(180deg, rgba(255,122,26,.22), rgba(255,122,26,.14));
+      color:#fff; border:1px solid rgba(255,122,26,.45);
+      box-shadow: inset 0 0 0 1px rgba(255,122,26,.15), 0 3px 10px rgba(0,0,0,.25);
+    }
+    .tab:hover{transform: translateY(-1px);}
 
-  /* MAIN */
-  main{ background: transparent; overflow:auto }
-  .panel{ background: linear-gradient(180deg, rgba(255,255,255,0.01), transparent); padding:18px; border-radius:12px; border:1px solid rgba(255,255,255,0.02) }
-  .panel h2{ margin:0 0 6px;color:var(--accent2) }
-  .seasons{ display:flex; flex-direction:column; gap:12px; margin-top:12px }
-  .season{ background:var(--card); border-radius:10px; overflow:hidden; border:1px solid rgba(255,255,255,0.02) }
-  .season-header{ display:flex; align-items:center; justify-content:space-between; padding:12px 14px; cursor:pointer; user-select:none }
-  .season-title{ font-weight:800; color:var(--accent1) }
-  .season-sub{ color:var(--muted); font-size:0.88rem }
-  .season-toggle{ width:40px; height:36px; display:flex; align-items:center; justify-content:center; border-radius:8px; color:var(--accent1); font-weight:800; background:transparent; border:none; cursor:pointer }
-  .season-content{ max-height:0; overflow:hidden; transition:max-height .36s ease, padding .22s ease; padding:0 14px }
-  .season.open .season-content{ padding:12px 14px 18px 14px; max-height:2000px }
-  .chapter{ background:#121212; border-radius:8px; padding:12px; display:flex; flex-direction:column; gap:10px; margin-bottom:10px; border:1px solid rgba(255,255,255,0.02); }
-  .chapter h3{ margin:0; color:var(--accent2) }
-  .chapter .info{ color:var(--muted); font-size:0.9rem }
-  .controls{ display:flex; gap:8px; flex-wrap:wrap }
-  .controls button{ background:linear-gradient(90deg,var(--accent1),var(--accent2)); border:none; color:#111; padding:8px 12px; border-radius:8px; cursor:pointer; font-weight:700 }
-  .controls button.secondary{ background:#333; color:#fff; border:1px solid rgba(255,255,255,0.04) }
+    .container{max-width:1200px; margin:18px auto; padding:0 16px; display:grid; grid-template-columns: 300px 1fr; gap:18px;}
+    @media (max-width: 980px){ .container{grid-template-columns:1fr} }
 
-  /* video-wrap: hidden by default, fade-in when shown */
-  .video-wrap{ margin-top:6px; background:#000; border-radius:8px; overflow:hidden; border:1px solid rgba(255,255,255,0.02); display:none; opacity:0; transform:translateY(6px); transition: opacity .36s ease, transform .36s ease; }
-  .video-wrap.visible{ display:block; opacity:1; transform:translateY(0); }
+    .sidebar{
+      background: linear-gradient(180deg, var(--card), var(--card-2));
+      border:1px solid rgba(255,255,255,.06);
+      border-radius:14px; box-shadow: var(--shadow); overflow:hidden;
+    }
+    .side-head{
+      padding:12px 14px; background:linear-gradient(90deg, rgba(255,122,26,.14), transparent);
+      border-bottom:1px solid rgba(255,255,255,.06); display:flex; flex-direction:column; gap:10px;
+    }
+    .side-head-top{display:flex; justify-content:space-between; align-items:center; gap:6px}
+    .side-head .pill{font-size:.8rem; color:#222; background:var(--accent); padding:3px 8px; border-radius:999px; border:1px solid rgba(0,0,0,.15)}
 
-  .video-wrap .embed-container { left: 0; width: 100%; height: 0; position: relative; padding-bottom: 56.25%; }
-  .video-wrap iframe{ position:absolute; top:0; left:0; width:100%; height:100%; border:0; display:block }
-  .drive-fallback{ padding:10px; background:#111; border-top:1px solid rgba(255,255,255,0.03); color:var(--muted); display:flex; gap:10px; align-items:center; justify-content:flex-start; }
-  .note{ color:var(--muted); font-size:0.85rem; margin-top:8px }
-  #games-panel{ display:none } #games-panel.active{ display:block }
-  @media (max-width:920px){ .video-wrap iframe{ height:44vh } aside{ order:2 } }
-</style>
+    /* Buscador unificado */
+    .search{position:relative; display:flex; align-items:center;}
+    .search input{
+      width:100%; padding:10px 34px 10px 12px; border-radius:10px; border:1px solid rgba(255,255,255,.08);
+      background:rgba(255,255,255,.05); color:#fff; outline:none;
+    }
+    .search .icon{
+      position:absolute; right:10px; width:18px; height:18px; opacity:.8; pointer-events:none;
+      background: radial-gradient(circle, rgba(255,255,255,.9) 40%, rgba(255,255,255,.0) 41%);
+      -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 5 1.5-1.5-5-5zM9.5 14C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>') center/contain no-repeat;
+              mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 5 1.5-1.5-5-5zM9.5 14C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>') center/contain no-repeat;
+    }
+
+    .side-section{padding:10px 10px 14px; border-top:1px dashed rgba(255,255,255,.06);}
+    .side-section:first-of-type{border-top:none}
+    .side-section h4{margin:10px 6px 8px; font-size:.94rem; color:#ffddc2; letter-spacing:.2px; display:flex; align-items:center; gap:8px; font-weight:700;}
+    .side-list{display:flex; flex-direction:column; gap:10px; padding:0 4px}
+
+    .side-item{
+      padding:10px; border-radius:12px; background:rgba(255,255,255,.03);
+      border:1px solid rgba(255,255,255,.06);
+      cursor:pointer; transition:all .15s ease; display:flex; gap:10px; align-items:center;
+    }
+    .side-item:hover{transform:translateX(2px); background:rgba(255,122,26,.10)}
+    .side-item.active{
+      background: linear-gradient(180deg, rgba(255,122,26,.24), rgba(255,122,26,.12));
+      border-color: rgba(255,122,26,.45);
+      box-shadow: inset 0 0 0 1px rgba(255,122,26,.12);
+    }
+    .side-thumb{
+      width:44px; height:44px; border-radius:8px; flex:0 0 44px; background:#222 center/cover no-repeat;
+      border:1px solid rgba(255,255,255,.08);
+    }
+    .side-info{display:flex; flex-direction:column; gap:2px}
+    .side-title{font-weight:700;}
+    .side-sub{opacity:.75; font-size:.82rem}
+
+    .panel{
+      background: linear-gradient(180deg, var(--card), var(--card-2));
+      border:1px solid rgba(255,255,255,.06); border-radius:14px; box-shadow: var(--shadow); overflow:hidden;
+    }
+    .panel-head{
+      padding:14px 16px; display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between;
+      border-bottom:1px solid rgba(255,255,255,.06);
+      background:linear-gradient(90deg, rgba(255,122,26,.08), transparent);
+    }
+    .crumbs{font-size:.92rem; color:#ffdbc1}
+    .badges{display:flex; gap:8px; flex-wrap:wrap}
+    .badge{font-size:.78rem; padding:4px 8px; border-radius:999px; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.08);}
+    .badge.primary{ background:rgba(255,122,26,.20); border-color:rgba(255,122,26,.45); color:#ffe4cf; }
+
+    .desc{padding:12px 16px; font-size:.95rem; color:#d8d8d8; border-bottom:1px dashed rgba(255,255,255,.06);}
+    .desc .link-season{
+      display:inline-flex; align-items:center; gap:6px; padding:4px 8px; border-radius:999px;
+      background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); margin-left:8px; cursor:pointer;
+    }
+    .desc .link-season:hover{background:rgba(255,122,26,.16); border-color:rgba(255,255,255,.35)}
+
+    .grid{display:grid; gap:14px; padding:14px 14px 18px; grid-template-columns: 1.1fr .9fr;}
+    @media (max-width: 980px){ .grid{grid-template-columns:1fr} }
+
+    .chapters{background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.06); border-radius:12px; overflow:hidden;}
+    .chap-head{padding:12px 14px; display:flex; align-items:center; justify-content:space-between; gap:6px; background:linear-gradient(90deg, rgba(255,122,26,.12), transparent); border-bottom:1px solid rgba(255,255,255,.06);}
+    .chap-list{display:flex; flex-direction:column}
+    .chap-item{display:flex; justify-content:space-between; align-items:center; gap:10px; padding:12px 14px; border-top:1px solid rgba(255,255,255,.06); background:transparent; cursor:pointer;}
+    .chap-item:hover{background:rgba(255,122,26,.06)}
+    .chap-item.active{background:rgba(255,122,26,.14)}
+    .tag{font-size:.75rem; padding:2px 6px; border-radius:6px; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.08);}
+
+    .players{background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.06); border-radius:12px; padding:12px; display:flex; flex-direction:column; gap:10px; min-height:320px;}
+    .player-buttons{display:flex; flex-wrap:wrap; gap:8px;}
+    .btn{border:1px solid rgba(255,255,255,.10); background:rgba(255,255,255,.06); color:#fff; padding:9px 12px; border-radius:10px; cursor:pointer; transition:.15s ease all; font-size:.92rem;}
+    .btn:hover{transform:translateY(-1px)}
+    .btn.primary{background: linear-gradient(180deg, rgba(255,122,26,.28), rgba(255,122,26,.16)); border-color: rgba(255,122,26,.45);}
+    .btn.disabled{background:rgba(255,255,255,.04)!important; border-color:rgba(255,255,255,.06)!important; color:#999!important; cursor:not-allowed!important; filter:grayscale(.6); box-shadow:none!important; transform:none!important;}
+    .viewer{margin-top:8px; border-radius:10px; overflow:hidden; border:1px solid rgba(255,255,255,.08); background:#000; aspect-ratio:16/9; display:flex; align-items:center; justify-content:center; color:#999; font-size:.92rem; position:relative;}
+    .viewer iframe{width:100%; height:100%; border:0}
+
+    /* Placeholder de portada dentro del visor */
+    .cover-ph{
+      position:absolute; inset:0;
+      background:#000 center/cover no-repeat;
+      opacity:0; animation: fadeIn .25s ease forwards;
+    }
+    .cover-hint{
+      position:absolute; bottom:10px; right:10px;
+      background:rgba(0,0,0,.45); border:1px solid rgba(255,255,255,.15);
+      padding:6px 8px; border-radius:8px; font-size:.85rem; color:#eee;
+      opacity:0; animation: fadeIn .25s ease .1s forwards;
+    }
+    @keyframes fadeIn{ to{opacity:1} }
+
+    .extras{margin:16px 14px 18px; padding:14px; border:1px solid rgba(255,255,255,.06); border-radius:12px; background:rgba(255,255,255,.03);}
+    .extras h4{margin:0 0 10px 0}
+
+    /* Mini reproductor MP3 (único) */
+    .audio-box{
+      display:flex; flex-direction:column; gap:8px; margin-bottom:12px; padding:12px;
+      border-radius:10px; background:linear-gradient(180deg, #121212, #0f0f0f); border:1px solid rgba(255,255,255,.08);
+    }
+    .audio-title{font-weight:700}
+    audio{width:100%}
+
+    /* Playlist con imagen */
+    .playlist-box{
+      display:grid;
+      grid-template-columns: 160px 1fr;
+      gap:12px;
+      margin-bottom:12px; padding:12px;
+      border-radius:12px; background:linear-gradient(180deg, #121212, #0f0f0f); border:1px solid rgba(255,255,255,.08);
+    }
+    @media (max-width:700px){ .playlist-box{grid-template-columns:1fr} }
+    .playlist-cover{
+      width:100%; aspect-ratio:1/1; border-radius:10px; background:#222 center/cover no-repeat;
+      border:1px solid rgba(255,255,255,.08);
+    }
+    .playlist-body{display:flex; flex-direction:column; gap:8px}
+    .playlist-title{font-weight:800}
+    .track-list{display:flex; flex-direction:column; gap:6px; max-height:180px; overflow:auto;}
+    .track-item{
+      display:flex; justify-content:space-between; gap:8px; align-items:center;
+      padding:8px 10px; border-radius:8px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08);
+      cursor:pointer;
+    }
+    .track-item:hover{background:rgba(255,122,26,.10)}
+    .track-item.active{background:rgba(255,122,26,.20); border-color:rgba(255,255,255,.35)}
+    .controls{display:flex; gap:8px; flex-wrap:wrap}
+    .controls .btn{padding:7px 10px; font-size:.88rem}
+
+    .extra-grid{display:grid; gap:10px; grid-template-columns: repeat(3, 1fr);}
+    @media (max-width: 700px){ .extra-grid{grid-template-columns:1fr} }
+    .extra-card{background:linear-gradient(180deg, #121212, #0f0f0f); border:1px solid rgba(255,255,255,.06); border-radius:12px; padding:12px; display:flex; flex-direction:column; gap:8px;}
+    .extra-card .title{font-weight:700}
+    .extra-card .mini{font-size:.85rem; color:#d0d0d0}
+    .extra-card .btn{width:100%; text-align:center}
+
+    .placeholder{padding:18px; font-size:1rem; color:#d0d0d0;}
+    .note{margin:10px 16px 0; padding:10px 12px; border-radius:10px; background:rgba(25,25,25,.6); border:1px dashed rgba(255,255,255,.10); color:#e9e9e9; font-size:.92rem;}
+  </style>
 </head>
 <body>
-
-<header>
-  <div class="brand">
-    <h1>RodrigoRPmods Web</h1>
-    <small>Tu espacio de Animes y Juegos</small>
-  </div>
-
-  <nav>
-    <button id="tab-anime" class="tab-btn active">Anime RPmods</button>
-    <button id="tab-games" class="tab-btn">Juegos</button>
-  </nav>
-</header>
-
-<div class="wrap">
-  <aside>
-    <div class="sidebar-title">Animes Disponibles</div>
-    <div class="sidebar-sub">Explora nuestras plantillas y títulos</div>
-
-    <div class="anime-list" id="animeList"></div>
-
-    <div class="sidebar-templates">
-      <div style="color:var(--muted);font-weight:700;margin-bottom:8px">Redes Sociales</div>
-      <div class="tpl" style="flex-direction:column;align-items:flex-start;padding:10px;">
-        <div style="font-weight:700;color:#fff;margin-bottom:6px">Telegram</div>
-        <a href="https://t.me/animerpmods" target="_blank" style="color:var(--accent2);text-decoration:none">t.me/animerpmods</a>
-        <div style="height:8px"></div>
-
-        <div style="font-weight:700;color:#fff;margin-bottom:6px">Facebook</div>
-        <a href="https://facebook.com/Rodrigorpmodsfanedits" target="_blank" style="color:var(--accent2);text-decoration:none">Rodrigorpmodsfanedits</a>
-        <div style="height:8px"></div>
-
-        <div style="font-weight:700;color:#fff;margin-bottom:6px">TikTok</div>
-        <a href="https://www.tiktok.com/@rodrigorpmods" target="_blank" style="color:var(--accent2);text-decoration:none">@rodrigorpmods</a>
-        <div style="height:8px"></div>
-
-        <div style="font-weight:700;color:#fff;margin-bottom:6px">YouTube</div>
-        <a href="https://www.youtube.com/@rodrigorpmods" target="_blank" style="color:var(--accent2);text-decoration:none">@rodrigorpmods</a>
-        <div style="height:8px"></div>
-
-        <div style="font-weight:700;color:#fff;margin-bottom:6px">PayPal</div>
-        <a href="https://paypal.me/rodrigorpmods" target="_blank" style="color:var(--accent2);text-decoration:none">paypal.me/rodrigorpmods</a>
-      </div>
+  <header>
+    <div class="brand">
+      <div class="dot"></div>
+      <div class="title">RodrigoRPmods Web</div>
     </div>
-  </aside>
+    <nav class="tabs" role="tablist" aria-label="Secciones">
+      <div class="tab active" role="tab" aria-selected="true" data-tab="animes">Animes</div>
+      <div class="tab" role="tab" aria-selected="false" data-tab="juegos">Juegos</div>
+    </nav>
+  </header>
 
-  <main>
-    <div id="panelAnime" class="panel">
-      <h2>Anime RPmods</h2>
-      <div class="note">Selecciona un anime a la izquierda. Las temporadas son desplegables; pulsa "Reproductor 01" para cargar el reproductor.</div>
-      <div id="animeDetail" style="margin-top:14px"></div>
-    </div>
+  <main id="content">
+    <!-- ANIMES -->
+    <section id="tab-animes" class="container" aria-labelledby="Animes">
+      <!-- Sidebar -->
+      <aside class="sidebar" aria-label="Catálogo de animes">
+        <div class="side-head">
+          <div class="side-head-top">
+            <strong>Categorías</strong>
+            <span class="pill">Anime BD RPmods / Anime</span>
+          </div>
 
-    <div id="games-panel" class="panel" style="margin-top:14px">
-      <h2>Juegos</h2>
-      <p class="note">Panel de juegos — aquí puedes añadir demos, enlaces o descargas.</p>
-    </div>
+          <!-- Buscador unificado -->
+          <div class="search" style="margin-top:8px;">
+            <input id="search-all" type="text" placeholder="Buscar en todas las categorías..." />
+            <div class="icon"></div>
+          </div>
+        </div>
+
+        <div class="side-section">
+          <h4>Anime BD RPmods <span class="tag">Principal</span></h4>
+          <div class="side-list" id="list-bd"></div>
+        </div>
+
+        <div class="side-section">
+          <h4>Anime <span class="tag">Secundario</span></h4>
+          <div class="side-list" id="list-tv"></div>
+        </div>
+      </aside>
+
+      <!-- Panel principal -->
+      <section class="panel" aria-live="polite">
+        <div class="panel-head">
+          <div class="crumbs" id="breadcrumbs">Selecciona un título en el lado izquierdo</div>
+          <div class="badges" id="badges">
+            <span class="badge">Audio: —</span>
+            <span class="badge">Subtítulos: —</span>
+            <span class="badge">OP/ED: —</span>
+            <span class="badge">Karaoke: —</span>
+            <span class="badge primary">Calidad: —</span>
+          </div>
+        </div>
+
+        <!-- Contadores por serie -->
+        <div id="series-stats" 
+             style="display:flex; gap:12px; align-items:center; 
+                    padding:10px 16px; border-bottom:1px dashed rgba(255,255,255,.06)">
+          <!-- Visitas -->
+          <span style="display:inline-flex; gap:6px; align-items:center; opacity:.9">
+            👁️ <strong id="views-count">—</strong> vistas
+          </span>
+
+          <!-- Likes -->
+          <button id="like-btn" class="btn" type="button" title="Me gusta">
+            👍 <span id="likes-count">—</span>
+          </button>
+
+          <!-- Mensaje de estado (errores / guardado local) -->
+          <span id="like-hint" style="font-size:.85rem; opacity:.8;"></span>
+        </div>
+
+        <div class="desc" id="category-note"></div>
+
+        <div class="grid">
+          <div class="chapters">
+            <div class="chap-head">
+              <strong id="chapters-title">Capítulos</strong>
+              <span class="tag">elige uno</span>
+            </div>
+            <div class="chap-list" id="chapters-list"></div>
+          </div>
+
+          <div class="players">
+            <div class="player-buttons" id="player-buttons"></div>
+            <div class="viewer" id="viewer"><!-- portada placeholder --></div>
+          </div>
+        </div>
+
+        <!-- Extras -->
+        <div class="extras">
+          <h4>Contenido extra</h4>
+
+          <!-- Mini reproductor MP3 (único) opcional -->
+          <div class="audio-box" id="audio-box" style="display:none">
+            <div class="audio-title" id="audio-title">Banda sonora exclusiva</div>
+            <audio id="audio-player" controls preload="none">
+              <source id="audio-src" src="" type="audio/mpeg">
+              Tu navegador no soporta audio HTML5.
+            </audio>
+            <div class="mini" style="opacity:.8">Puedes usar un <strong>link</strong> (mp3/stream) o una <strong>ruta local</strong>.</div>
+          </div>
+
+          <!-- Playlist con imagen (visible SIEMPRE en BD RPmods) -->
+          <div class="playlist-box" id="playlist-box" style="display:none">
+            <div class="playlist-cover" id="playlist-cover"></div>
+            <div class="playlist-body">
+              <div class="playlist-title" id="playlist-title">Playlist</div>
+              <div class="controls">
+                <button class="btn" id="btn-prev">⟨ Anterior</button>
+                <button class="btn" id="btn-play">▶ Reproducir</button>
+                <button class="btn" id="btn-next">Siguiente ⟩</button>
+              </div>
+              <div class="track-list" id="track-list"></div>
+              <audio id="playlist-audio" preload="none"></audio>
+            </div>
+          </div>
+
+          <div class="extra-grid" id="extras-grid"></div>
+        </div>
+
+        <div class="note">
+          Tip: Cualquier botón sin enlace aparecerá en <strong>gris</strong>. Edita enlaces e info en el objeto <code>DATA</code>.
+        </div>
+      </section>
+    </section>
+
+    <!-- JUEGOS -->
+    <section id="tab-juegos" class="container" style="display:none" aria-labelledby="Juegos">
+      <section class="panel" style="grid-column:1/-1">
+        <div class="panel-head">
+          <div class="crumbs">Juegos</div>
+          <div class="badges"><span class="badge">Próximamente</span></div>
+        </div>
+        <div class="placeholder">
+          Esta sección está preparada para tus juegos. Puedes reutilizar el estilo de <em>Animes</em>.
+        </div>
+      </section>
+    </section>
   </main>
-</div>
 
-<script>
-(function(){
-  const animeListEl = document.getElementById('animeList');
-  const animeDetailEl = document.getElementById('animeDetail');
-
-  // New player URL (applied to Capítulos 01 y 02 and kept as template)
-  const PLAYER01 = 'https://rodrigorpmods.rpmlive.online/#assgjc';
-  const PLAYER02 = 'https://rodrigorpmods.rpmlive.online/#qyy5ic';
-
-  // Data
-  const animes = [
-    {
-      id:'quint',
-      title:'Las Quintillizas',
-      thumb:'https://images.justwatch.com/backdrop/241404078/s640/gotoubun-no-hanayome',
-      sub:'Sub Español',
-      formato:'BD RPmods',
-      calidad:'1080p',
-      seasons:[
-        {
-          id:'q-s1',
-          title:'Las quintillizas — Temporada 1',
-          summary:'Sub Español • BD RPmods',
-          chapters:[
-            {
-              id:'q1',
-              title:'Capítulo 01 y 02',
-              info:'BD RPmods — 1080p',
-              player: PLAYER01,
-              facebook: 'https://www.facebook.com/rodrigorpmodsfanedits/videos/go-toubun-no-hanayome-cap%C3%ADtulo-1-y-cap%C3%ADtulo-2-sub-espa%C3%B1ol-fanedit-especial-de-lo/2681562718873374/',
-              additionalPlayer: 'https://www.burstcloud.co/embed/e26685e0e94c3f13648e0fa29968af01af467c43f2e8cfe1e15f15905fbfddeb/GNH_CAP01RPMODS.mp4'
-            },
-            {
-              id:'q2',
-              title:'Capítulo 03 y 04',
-              info:'BD RPmods — 1080p',
-              player: PLAYER02,
-              facebook: 'https://www.facebook.com/rodrigorpmodsfanedits/videos/go-toubun-no-hanayome-cap%C3%ADtulo-3-y-cap%C3%ADtulo-4-sub-espa%C3%B1ol-fanedit-especial-de-lo/4348404222151302/'
-            }
-          ]
-        },
-        { id:'q-s2', title:'Las quintillizas — Temporada 2', summary:'Sub Español • BD RPmods', chapters:[ { id:'q2e1', title:'Capítulo 01', info:'Próximamente', player:'' } ] },
-        { id:'q-mv', title:'Las quintillizas — La película', summary:'Película — Sub Español • BD RPmods', chapters:[ { id:'qmv', title:'Película (BD)', info:'Próximamente', player:'' } ] }
-      ]
-    },
-
-    {
-      id:'konosuba',
-      title:'Konosuba',
-      thumb:'http://alpha.uscreencdn.com/images/categories/95567/big_Episodios-KonoSuba-Relleno-Orden-Cronologico.1631895312.jpg',
-      Doblaje:'Latino',
-      formato:'BD RPmods',
-      calidad:'720p',
-      seasons:[
-        {
-          id: 'k-s1',
-          title: 'Konosuba — Temporada 1',
-          summary: 'LATINO',
+  <script>
+    /* ===========================
+       DATASET EDITABLE
+       =========================== */
+    const DATA = {
+      bd: {
+        "Las Quintillizas (Temporada 1)": {
+          cover: "portada/portadas1gnh.jpg",
+          season2Key: "Las Quintillizas (Temporada 2)",
+          openingUrl: "",   // Opening propio
+          endingUrl: "",    // Ending propio
+          info: {
+            audio: "Japonés",
+            subs: "Español (SUB)",
+            oped: "Clean Version",
+            karaoke: "Sí",
+            quality: "1080p (BD RPmods)",
+            note: "Edición Blu-ray con mejoras de imagen, audio y extras exclusivos."
+          },
           chapters: [
-		    {
-		      id: 'k1',
-			  title: 'Capítulo 01 y 02',
-			  info: 'BD RPmods — 1080p y 720p (dependiendo el reproductor) (actualizado 1/11/2025) v2',
-			  player: 'https://rodrigorpmods.rpmlive.online/#611rbc',
-			  facebook: 'https://www.facebook.com/rodrigorpmodsfanedits/videos/konosuba-t1-cap%C3%ADtulo-1-y-cap%C3%ADtulo-2-latino-fanedit-especial-de-los-capitulos-1-y/1161758436059972/',
-			  additionalPlayer: 'https://video-bog2-1.xx.fbcdn.net/o1/v/t2/f2/m366/AQMJGHUVAoX1I1Fhv6ip_7C1iHQK8OA16XvyP7L0hYEFlfrZUtFavY-XmpuHbXVgyroNtF9YB-dAAkWByL2lAFiL6yMHLnCKfTB7sGSfYm4VgQ.mp4?_nc_cat=102&_nc_sid=5e9851&_nc_ht=video-bog2-1.xx.fbcdn.net&_nc_ohc=mNgdgEmyQ44Q7kNvwHqzrWZ&efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5GQUNFQk9PSy4uQzMuMTI4MC5kYXNoX2gyNjQtYmFzaWMtZ2VuMl83MjBwIiwieHB2X2Fzc2V0X2lkIjoyNTU0NDY0ODUxNjAxMjUwLCJhc3NldF9hZ2VfZGF5cyI6MCwidmlfdXNlY2FzZV9pZCI6MTAxMjIsImR1cmF0aW9uX3MiOjI3NDQsInVybGdlbl9zb3VyY2UiOiJ3d3cifQ%3D%3D&ccb=17-1&vs=d44285d42d5c4231&_nc_vs=HBksFQIYRWZiX2VwaGVtZXJhbC8zMzQyNTFGNDYyRDI1QUJCREFFMDVFMEIzNkM4MjM5M19tdF8xX3ZpZGVvX2Rhc2hpbml0Lm1wNBUAAsgBEgAVAhhFZmJfZXBoZW1lcmFsLzQ1NDFGNDAwQzc5RjNFQzdGQThFNjhDMjRDRjhEMThEX210XzBfYXVkaW9fZGFzaGluaXQubXA0FQICyAESACgAGAAbAogHdXNlX29pbAExEnByb2dyZXNzaXZlX3JlY2lwZQExFQAAJsSdkaG20YkJFQIoAkMzLBdApXFn752yLRgZZGFzaF9oMjY0LWJhc2ljLWdlbjJfNzIwcBEAdQJllJ4BAA&_nc_gid=QIq6ayiOABuX29Zys9sLYw&_nc_zt=28&oh=00_AfgCXuv6Q5USMgOBxfmLzLqnC_l9nJfVDloT9jcYiKXZ7A&oe=690CBE62&bitrate=783293&tag=dash_h264-basic-gen2_720p'
-		    }
-		  ]
-        },		  
-        { id:'k-s2', title:'Konosuba — Temporada 2', summary:'LATINO', chapters:[ { id:'k2', title:'Episodios (1..)', info:'Agregar enlaces', player:'' } ] },
-        { id:'k-mv', title:'Konosuba — Película', summary:'LATINO', chapters:[ { id:'kmv', title:'Película', info:'Agregar enlace', player:'' } ] },
-        { id:'k-s3', title:'Konosuba — Temporada 3', summary:'LATINO', chapters:[ { id:'k3', title:'Episodios (1..)', info:'Agregar enlaces', player:'' } ] }
-      ]
-    },
+            { id:"gtn-t1-c01-02", title:"Capítulo 01 y 02", info:"BD RPmods — 1080p",
+              players:{ player1:"https://rodrigorpmods.rpmlive.online/#assgjc", player2:"", fb:"https://www.facebook.com/rodrigorpmodsfanedits/videos/go-toubun-no-hanayome-cap%C3%ADtulo-1-y-cap%C3%ADtulo-2-sub-espa%C3%B1ol-fanedit-especial-de-lo/2681562718873374/", fb720:"https://video-bog2-2.xx.fbcdn.net/o1/v/t2/f2/m366/AQNtDHYIK0FHQfrjNhvQiOEtAmjPmq-Xiercrt0lGeINB-QYUFRg99VU50FGEuSWv7vRdrR_-U48K7UjNeCc4PLY9ssz2s7jyx-ow0ld9gQJXw.mp4?_nc_cat=108&_nc_sid=5e9851&_nc_ht=video-bog2-2.xx.fbcdn.net&_nc_ohc=yo9tAweFKw8Q7kNvwHzQk0y&efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5GQUNFQk9PSy4uQzMuMTI4MC5kYXNoX2gyNjQtYmFzaWMtZ2VuMl83MjBwIiwieHB2X2Fzc2V0X2lkIjoxNzYxNTc1NjQ0NTU4ODY0LCJhc3NldF9hZ2VfZGF5cyI6NSwidmlfdXNlY2FzZV9pZCI6MTAxMjIsImR1cmF0aW9uX3MiOjI2NjUsInVybGdlbl9zb3VyY2UiOiJ3d3cifQ%3D%3D&ccb=17-1&vs=ddb54b5ecf51517a&_nc_vs=HBksFQIYRWZiX2VwaGVtZXJhbC82OTQ2MEU1NDdDMDM2MEVFQ0Q5MzkyMEE5RDU1NDA5QV9tdF8xX3ZpZGVvX2Rhc2hpbml0Lm1wNBUAAsgBEgAVAhhFZmJfZXBoZW1lcmFsLzdBNEE5RkIyRjdBMDRDMTVGREI0OURGMjc0MEI4MEJEX210XzBfYXVkaW9fZGFzaGluaXQubXA0FQICyAESACgAGAAbAogHdXNlX29pbAExEnByb2dyZXNzaXZlX3JlY2lwZQExFQAAJqDYz6iZiaEGFQIoAkMzLBdApNKUeuFHrhgZZGFzaF9oMjY0LWJhc2ljLWdlbjJfNzIwcBEAdQJllJ4BAA&_nc_gid=1JoCzSit2BDkOc8D9IH4aQ&_nc_zt=28&oh=00_AfiCJdi0bfKdbiNNni6K4cTeT-es19h1I-trWnrKZP_How&oe=690F1798&bitrate=731515&tag=dash_h264-basic-gen2_720p", player3:"https://www.burstcloud.co/embed/e26685e0e94c3f13648e0fa29968af01af467c43f2e8cfe1e15f15905fbfddeb/GNH_CAP01RPMODS.mp4" } },
+            { id:"gtn-t1-c03-04", title:"Capítulo 03 y 04", info:"BD RPmods — 1080p",
+              players:{ player1:"https://rodrigorpmods.rpmlive.online/#qyy5ic", player2:"", fb:"https://www.facebook.com/rodrigorpmodsfanedits/videos/go-toubun-no-hanayome-cap%C3%ADtulo-3-y-cap%C3%ADtulo-4-sub-espa%C3%B1ol-fanedit-especial-de-lo/4348404222151302/", fb720:"https://video-bog2-1.xx.fbcdn.net/o1/v/t2/f2/m366/AQOfrVQaBBOmdVv4qfF8NQjDCoQ9z5a_e3XFDEm4D5Vs9Y60oIBQ1YdDQjhvO1OWi3PlM7UxMDppgfLVAhg0_UxItBEyhH-t9112qcNrNmuqHA.mp4?_nc_cat=102&_nc_sid=5e9851&_nc_ht=video-bog2-1.xx.fbcdn.net&_nc_ohc=VGKDI7XHHZMQ7kNvwGPUd7J&efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5GQUNFQk9PSy4uQzMuMTI4MC5kYXNoX2gyNjQtYmFzaWMtZ2VuMl83MjBwIiwieHB2X2Fzc2V0X2lkIjo3OTU2OTY4MTMyMjQxOTAsImFzc2V0X2FnZV9kYXlzIjozLCJ2aV91c2VjYXNlX2lkIjoxMDEyMiwiZHVyYXRpb25fcyI6MjY3OSwidXJsZ2VuX3NvdXJjZSI6Ind3dyJ9&ccb=17-1&vs=657c10b609d55c2b&_nc_vs=HBksFQIYRWZiX2VwaGVtZXJhbC8wRTQzRjU1OEQ3ODExM0FBRTY3NEFGQTVBOTlFRTE5MV9tdF8xX3ZpZGVvX2Rhc2hpbml0Lm1wNBUAAsgBEgAVAhhFZmJfZXBoZW1lcmFsL0I2NDEyRjE4ODM0OTQ5MkY2Q0U1REY0NTAxMjA4RkE0X210XzBfYXVkaW9fZGFzaGluaXQubXA0FQICyAESACgAGAAbAogHdXNlX29pbAExEnByb2dyZXNzaXZlX3JlY2lwZQExFQAAJvzDtZ7T6-kCFQIoAkMzLBdApO6GJN0vGxgZZGFzaF9oMjY0LWJhc2ljLWdlbjJfNzIwcBEAdQJllJ4BAA&_nc_gid=hGcFwndkV3PO6KH6vsFvRA&_nc_zt=28&oh=00_Afga6If1nE0E5fWDtgEv-T7HDVADMzOPewXAfDpE9oMbdg&oe=690F2FEE&bitrate=731839&tag=dash_h264-basic-gen2_720p", player3:"" } },
+            { id:"gtn-t1-prox1", title:"Próximamente — Capítulos 05 y 06", info:"Esperando estreno", status:"Próximo",
+              players:{ player1:"", player2:"", fb:"", fb720:"", player3:"" } }
+          ],
+          extrasAudio: { title: "OST — Quintillizas", url: "" },
+          extras: [
+            { id:"gtn-extra-1", title:"Extra 01 — Entrevista Seiyuu", url:"" },
+            { id:"gtn-extra-2", title:"Extra 02 — Clean OP (BD)", url:"" },
+            { id:"gtn-extra-3", title:"Extra 03 — Clean ED (BD)", url:"" }
+          ],
+          extrasPlaylist: { cover:"extra/cover_quintillizas_t1.jpg", title:"Playlist — Quintillizas T1", tracks: [] }
+        },
+        "Las Quintillizas (Temporada 2)": {
+          cover: "",
+          season2Key: null,
+          openingUrl: "",
+          endingUrl: "",
+          info: {
+            audio: "Japonés",
+            subs: "Español (SUB)",
+            oped: "Clean Version",
+            karaoke: "Sí",
+            quality: "1080p (BD RPmods)",
+            note: "Temporada 2 en edición Blu-ray con añadidos."
+          },
+          chapters: [
+            { id:"gtn-t2-prox0", title:"Próximamente — Capítulos 01 y 02", info:"Esperando estreno", status:"Próximo", players:{ player1:"", player2:"", fb:"", fb720:"", player3:"" } },
+            { id:"gtn-t2-prox1", title:"Próximamente — Capítulos 03 y 04", info:"Esperando estreno", status:"Próximo", players:{ player1:"", player2:"", fb:"", fb720:"", player3:"" } },
+            { id:"gtn-t2-prox2", title:"Próximamente — Capítulos 05 y 06", info:"Esperando estreno", status:"Próximo", players:{ player1:"", player2:"", fb:"", fb720:"", player3:"" } },
+			      { id:"gtn-t2-prox3", title:"Próximamente — Capítulos 07 y 08", info:"Esperando estreno", status:"Próximo", players:{ player1:"", player2:"", fb:"", fb720:"", player3:"" } }
+          ],
+          extrasAudio: { title: "OST — Quintillizas T2", url: "" },
+          extras: [
+            { id:"gtn2-extra-1", title:"Extra 01 — PV T2", url:"" },
+            { id:"gtn2-extra-2", title:"Extra 02 — Clean OP (BD)", url:"" },
+            { id:"gtn2-extra-3", title:"Extra 03 — Clean ED (BD)", url:"" }
+          ],
+          extrasPlaylist: { cover:"extra/cover_quintillizas_t2.jpg", title:"Playlist — Quintillizas T2", tracks: [] }
+        },
+        "KonoSuba (Temporada 1)": {
+          cover: "portada/portadas1fk.png",
+          season2Key: "KonoSuba (Temporada 2)",
+          openingUrl: "https://www.youtube.com/watch?v=fpG3BPNQepY",  // ejemplo
+          endingUrl: "",
+          info: {
+            audio: "Japonés",
+            subs: "Español (SUB)",
+            oped: "Clean Version",
+            karaoke: "Sí",
+            quality: "1080p (BD RPmods)",
+            note: "Edición Blu-ray con timing de karaoke y filtros de imagen."
+          },
+          chapters: [
+            { id:"ksb-t1-c01-02", title:"Capítulo 01 y 02", info:"BD RPmods — 1080p", players:{ player1:"https://rodrigorpmods.rpmlive.online/#8kqexi", player2:"", fb:"https://www.facebook.com/rodrigorpmodsfanedits/videos/konosuba-temporada-1-cap%C3%ADtulo-1-cap%C3%ADtulo-2-latino-fanedit-especial-de-los-capitu/1884398822168757/", fb720:"https://video-bog2-2.xx.fbcdn.net/o1/v/t2/f2/m366/AQPI-A_BduNVAienQtoXDugFPfmNT9pL2FTDAaAwsmhJeof6SGn3FcOwYc4RrkVTovbYlgWzQyjXDuv-jcpeH2NfmbzQ7d7iYyk2G7XoPdOlNA.mp4?_nc_cat=107&_nc_sid=5e9851&_nc_ht=video-bog2-2.xx.fbcdn.net&_nc_ohc=e5BWtvFxVJkQ7kNvwH3KCK7&efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5GQUNFQk9PSy4uQzMuMTI4MC5kYXNoX2gyNjQtYmFzaWMtZ2VuMl83MjBwIiwieHB2X2Fzc2V0X2lkIjoxNDMxMDY1NjUyMDYzNjY5LCJhc3NldF9hZ2VfZGF5cyI6MCwidmlfdXNlY2FzZV9pZCI6MTAxMjIsImR1cmF0aW9uX3MiOjI3NDQsInVybGdlbl9zb3VyY2UiOiJ3d3cifQ%3D%3D&ccb=17-1&vs=3855153b6433010a&_nc_vs=HBksFQIYRWZiX2VwaGVtZXJhbC8xMDRGOUVEMDVBNzkwN0NCRjBCMzBBOTM1Njg2RTM5MV9tdF8xX3ZpZGVvX2Rhc2hpbml0Lm1wNBUAAsgBEgAVAhhFZmJfZXBoZW1lcmFsLzI2NDgxNTVGRjY4OEE5RjVBM0JBMDkxQ0MwOUIxMDlFX210XzBfYXVkaW9fZGFzaGluaXQubXA0FQICyAESACgAGAAbAogHdXNlX29pbAExEnByb2dyZXNzaXZlX3JlY2lwZQExFQAAJuq2u_394ooFFQIoAkMzLBdApXFn752yLRgZZGFzaF9oMjY0LWJhc2ljLWdlbjJfNzIwcBEAdQJllJ4BAA&_nc_gid=UKGOG2bNbmYxk48BYHGfKw&_nc_zt=28&oh=00_AfgJZ7b8wBOgb_cUkzfI6CViGLOxHMU4syoDQD5hfPehLQ&oe=690F2E3D&bitrate=769664&tag=dash_h264-basic-gen2_720p", player3:"" } },
+            { id:"ksb-t1-prox1", title:"Próximamente — Capítulos 03 y 04", info:"Esperando estreno", status:"Próximo", players:{ player1:"", player2:"", fb:"", fb720:"", player3:"" } },
+            { id:"ksb-t1-prox2", title:"Próximamente — Capítulos 05 y 06", info:"Esperando estreno", status:"Próximo", players:{ player1:"", player2:"", fb:"", fb720:"", player3:"" } }
+          ],
+          extrasAudio: { title: "Radio KonoSuba — Selección", url: "" },
+          extras: [
+            { id:"ksb-extra-1", title:"Extra 01 — Radio (mp3)", url:"" },
+            { id:"ksb-extra-2", title:"Extra 02 — Clean OP (BD)", url:"" },
+            { id:"ksb-extra-3", title:"Extra 03 — Clean ED (BD)", url:"" }
+          ],
+          extrasPlaylist: {
+            cover: "extra/CB_COVER.png",
+            title: "Chiisana Boukensha — Colección Ending S1 (Japonés)",
+            tracks: [
+              { src: "extra/01CB.mp3",   title: "Chiisana Boukensha Ending Version Full" },
+              { src: "extra/02CBAV.mp3", title: "Chiisana Boukensha Aqua Version Full" },
+              { src: "extra/03CBM.mp3",  title: "Chiisana Boukensha Megumin Version Full" },
+              { src: "extra/04CBD.mp3",  title: "Chiisana Boukensha Darkness Version Full" },
+              { src: "extra/05CBI.mp3",  title: "Chiisana Boukensha (Instrumental)" }
+            ]
+          }
+        },
+        "KonoSuba (Temporada 2)": {
+          cover: "",
+          season2Key: null,
+          openingUrl: "",
+          endingUrl: "",
+          info: {
+            audio: "Japonés",
+            subs: "Español (SUB)",
+            oped: "Clean Version",
+            karaoke: "Sí",
+            quality: "1080p (BD RPmods)",
+            note: "Temporada 2 con mejoras BD RPmods."
+          },
+          chapters: [
+            { id:"ksb-t2-prox0", title:"Próximamente — Capítulos 01 y 02", info:"Esperando estreno", status:"Próximo", players:{ player1:"", player2:"", fb:"", fb720:"", player3:"" } },
+            { id:"ksb-t2-prox1", title:"Próximamente — Capítulos 03 y 04", info:"Esperando estreno", status:"Próximo", players:{ player1:"", player2:"", fb:"", fb720:"", player3:"" } },
+            { id:"ksb-t2-prox2", title:"Próximamente — Capítulos 05 y 06", info:"Esperando estreno", status:"Próximo", players:{ player1:"", player2:"", fb:"", fb720:"", player3:"" } }
+          ],
+          extrasAudio: { title: "Radio KonoSuba T2 — Selección", url: "" },
+          extras: [
+            { id:"ksb2-extra-1", title:"Extra 01 — PV T2", url:"" },
+            { id:"ksb2-extra-2", title:"Extra 02 — Clean OP (BD)", url:"" },
+            { id:"ksb2-extra-3", title:"Extra 03 — Clean ED (BD)", url:"" }
+          ],
+          extrasPlaylist: { cover:"extra/cover_konosuba_t2.jpg", title:"Playlist — KonoSuba T2", tracks: [] }
+        }
+      },
+      tv: {
+        "Las 100 Novias": {
+          cover: "",
+          season2Key: null,
+          info: {
+            audio: "Japonés",
+            subs: "Español (SUB)",
+            oped: "Versión TV",
+            karaoke: "No",
+            quality: "1080p",
+            note: "Edición estándar para streaming."
+          },
+          chapters: [
+            { id:"100nv-prox0", title:"Próximamente — Capítulos 01 y 02", info:"Esperando estreno", status:"Próximo", players:{ player1:"", player2:"", fb:"", fb720:"", player3:"" } },
+            { id:"100nv-prox1", title:"Próximamente — Capítulos 03 y 04", info:"Esperando estreno", status:"Próximo", players:{ player1:"", player2:"", fb:"", fb720:"", player3:"" } },
+            { id:"100nv-prox2", title:"Próximamente — Capítulos 05 y 06", info:"Esperando estreno", status:"Próximo", players:{ player1:"", player2:"", fb:"", fb720:"", player3:"" } }
+          ],
+          extrasAudio: { title: "OST — 100 Novias", url: "" },
+          extras: [
+            { id:"100nv-extra-1", title:"Extra 01 — PV #1", url:"" },
+            { id:"100nv-extra-2", title:"Extra 02 — PV #2", url:"" },
+            { id:"100nv-extra-3", title:"Extra 03 — OST Preview", url:"" }
+          ],
+          extrasPlaylist: { cover:"extra/cover_100novias.jpg", title:"Playlist — 100 Novias", tracks: [] }
+        }
+      }
+    };
 
-    {
-      id:'rentaro',
-      title:'Las 100 novias de Rentarō',
-      thumb:'https://a.storyblok.com/f/178900/1920x1080/11e1a2c9cc/the-100-girlfriends-episode-12.png',
-      sub:'',
-      formato:'',
-      calidad:'',
-      seasons:[
-        { id:'r-s1', title:'Temporada 1', summary:'LATINO', chapters:[ { id:'r1', title:'Episodios (1..)', info:'Agregar enlaces', player:'' } ] },
-        { id:'r-s2', title:'Temporada 2', summary:'LATINO', chapters:[ { id:'r2', title:'Episodios (1..)', info:'Agregar enlaces', player:'' } ] }
-      ]
+    /* ===========================
+       UTILIDADES UI
+       =========================== */
+    const $  = sel => document.querySelector(sel);
+    const $$ = sel => Array.from(document.querySelectorAll(sel));
+
+    /* ===========================
+       COUNTAPI (likes + visitas)
+       =========================== */
+    const COUNTAPI_BASE = 'https://api.countapi.xyz';
+    const COUNTAPI_NS   = 'rodrigorpmods'; // namespace global
+
+    function slugifySeries(scope, key){
+      let base = (key || '').toLowerCase()
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .replace(/[()]/g, '')
+        .replace(/[^a-z0-9]+/g, '_')
+        .replace(/^_+|_+$/g, '');
+      return `${scope}_${base}`;
     }
-  ];
-
-  let currentAnimeId = animes[0].id;
-  let currentTab = 'anime';
-
-  function buildSidebar(){
-    animeListEl.innerHTML = '';
-    animes.forEach((a, idx)=>{
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'anime-item';
-
-      const thumb = document.createElement('div'); thumb.className='anime-thumb';
-      if(a.thumb){
-        const img = document.createElement('img'); img.src = a.thumb; img.alt = a.title;
-        thumb.appendChild(img);
-      } else {
-        thumb.textContent = 'IMG';
-      }
-
-      const meta = document.createElement('div'); meta.className='anime-meta';
-      const title = document.createElement('div'); title.className='title'; title.textContent = a.title;
-      const mini = document.createElement('div'); mini.className='mini';
-      mini.textContent = a.seasons && a.seasons[0] ? a.seasons[0].summary : (a.sub ? a.sub : '');
-      meta.appendChild(title); meta.appendChild(mini);
-
-      btn.appendChild(thumb); btn.appendChild(meta);
-
-      if(!a.seasons || a.seasons.length === 0){
-        btn.style.opacity = '0.7'; btn.style.cursor = 'default';
-        btn.addEventListener('click', ()=> alert('Plantilla vacía. Agrega temporadas en el array `animes`.'));
-      } else {
-        btn.addEventListener('click', ()=> selectAnime(a.id));
-      }
-
-      animeListEl.appendChild(btn);
-    });
-    updateSidebarActive();
-  }
-
-  function updateSidebarActive(){
-    const items = animeListEl.querySelectorAll('.anime-item');
-    items.forEach(it => it.classList.remove('active'));
-    const idx = animes.findIndex(x => x.id === currentAnimeId);
-    if(idx >= 0 && animeListEl.children[idx]) animeListEl.children[idx].classList.add('active');
-  }
-
-  function selectAnime(id){
-    const anime = animes.find(x => x.id === id);
-    if(!anime) return;
-    currentAnimeId = id;
-    updateSidebarActive();
-
-    animeDetailEl.innerHTML = '';
-
-    // header block with thumb + meta
-    const header = document.createElement('div'); header.className='panel'; header.style.padding='12px';
-    const headerInner = document.createElement('div'); headerInner.style.display='flex'; headerInner.style.gap='12px'; headerInner.style.alignItems='center';
-    const imgBox = document.createElement('div'); imgBox.style.width='140px'; imgBox.style.height='80px'; imgBox.style.borderRadius='8px'; imgBox.style.overflow='hidden'; imgBox.style.background='#111';
-    if(anime.thumb){
-      const img = document.createElement('img'); img.src = anime.thumb; img.alt = anime.title; img.style.width='100%'; img.style.height='100%'; img.style.objectFit='cover';
-      imgBox.appendChild(img);
+    async function countapi(path){
+      const res = await fetch(`${COUNTAPI_BASE}${path}`);
+      if(!res.ok) throw new Error(`CountAPI ${res.status}`);
+      return res.json();
     }
-    const txtBox = document.createElement('div');
-    const tTitle = document.createElement('div'); tTitle.style.fontWeight='800'; tTitle.style.color='var(--accent1)'; tTitle.style.fontSize='1.05rem'; tTitle.textContent = anime.title;
-    const tMeta = document.createElement('div'); tMeta.style.color='var(--muted)'; tMeta.style.marginTop='6px'; tMeta.textContent = (anime.sub ? 'Sub: ' + anime.sub + ' • ' : '') + (anime.formato ? anime.formato + (anime.calidad ? ' • ' : '') : '') + (anime.calidad ? anime.calidad : '');
-    txtBox.appendChild(tTitle); txtBox.appendChild(tMeta);
-    headerInner.appendChild(imgBox); headerInner.appendChild(txtBox);
-    header.appendChild(headerInner);
-    animeDetailEl.appendChild(header);
+    async function ensureKey(type, slug){
+      const key = `${type}:${slug}`;
+      try {
+        const r = await countapi(`/get/${COUNTAPI_NS}/${key}`);
+        if(typeof r.value === 'number') return r.value;
+      } catch(e) {}
+      const r2 = await countapi(`/create?namespace=${encodeURIComponent(COUNTAPI_NS)}&key=${encodeURIComponent(key)}&value=0`);
+      return r2.value ?? 0;
+    }
+    async function hitView(slug){
+      const key = `views:${slug}`;
+      const r = await countapi(`/hit/${COUNTAPI_NS}/${key}`);
+      return r.value;
+    }
+    async function getLikes(slug){
+      await ensureKey('likes', slug);
+      const r = await countapi(`/get/${COUNTAPI_NS}/likes:${slug}`);
+      return r.value || 0;
+    }
+    async function addLike(slug){
+      const r = await countapi(`/update/${COUNTAPI_NS}/likes:${slug}?amount=1`);
+      return r.value;
+    }
+    function localLikeKey(slug){ return `rp_like_${slug}`; }
+    function hasLiked(slug){ return localStorage.getItem(localLikeKey(slug)) === '1'; }
+    function markLiked(slug){ localStorage.setItem(localLikeKey(slug), '1'); }
 
-    // seasons
-    const seasonsWrap = document.createElement('div'); seasonsWrap.className='seasons';
-    anime.seasons.forEach(season => {
-      const seasonEl = document.createElement('div'); seasonEl.className='season';
+    const tabButtons = $$('.tab');
+    const tabAnimes  = $('#tab-animes');
+    const tabJuegos  = $('#tab-juegos');
 
-      const sHeader = document.createElement('div'); sHeader.className='season-header'; sHeader.tabIndex = 0; sHeader.setAttribute('role','button');
-      const left = document.createElement('div');
-      const sTitle = document.createElement('div'); sTitle.className='season-title'; sTitle.textContent = season.title;
-      const sSub = document.createElement('div'); sSub.className='season-sub'; sSub.textContent = season.summary || '';
-      left.appendChild(sTitle); left.appendChild(sSub);
-      const toggle = document.createElement('button'); toggle.className='season-toggle'; toggle.type='button'; toggle.setAttribute('aria-expanded','false'); toggle.textContent = '▼';
-      sHeader.appendChild(left); sHeader.appendChild(toggle);
-
-      const content = document.createElement('div'); content.className='season-content';
-
-      if(season.chapters && season.chapters.length){
-        season.chapters.forEach(ch => {
-          const chap = document.createElement('div'); chap.className='chapter';
-          const h3 = document.createElement('h3'); h3.textContent = ch.title;
-          const info = document.createElement('div'); info.className='info'; info.textContent = ch.info || '';
-          const controls = document.createElement('div'); controls.className='controls';
-
-          if(ch.player){
-            const bPlay = document.createElement('button'); bPlay.className='btn-player'; bPlay.type='button'; bPlay.textContent='Reproductor 01';
-            bPlay.dataset.player = ch.player;
-            controls.appendChild(bPlay);
-          } else {
-            const b = document.createElement('button'); b.className='secondary'; b.disabled = true; b.textContent='Reproductor no disponible'; controls.appendChild(b);
-          }
-
-          // === ADDED: Ver en Facebook button if ch.facebook exists ===
-          if(ch.facebook){
-            const bFb = document.createElement('button');
-            bFb.className = 'btn-fb';
-            bFb.type = 'button';
-            bFb.textContent = 'Ver en Facebook';
-            bFb.addEventListener('click', ()=> {
-              window.open(ch.facebook, '_blank');
-            });
-            controls.appendChild(bFb);
-          }
-
-          // === ADDED: Button for additional player ===
-          if(ch.additionalPlayer){
-            const bPlay2 = document.createElement('button');
-            bPlay2.className = 'btn-player';
-            bPlay2.type = 'button';
-            bPlay2.textContent = 'Reproductor Adicional';
-            bPlay2.dataset.player = ch.additionalPlayer;
-            controls.appendChild(bPlay2);
-          }
-          // =========================================================
-
-          const videoWrap = document.createElement('div'); videoWrap.className='video-wrap';
-
-          // videoWrap hidden until user clicks; fallback created for each chapter
-          videoWrap.style.display = 'none';
-
-          const fallback = document.createElement('div');
-          fallback.className = 'drive-fallback';
-          fallback.style.display = 'none';
-          videoWrap.appendChild(fallback);
-
-          chap.appendChild(h3); chap.appendChild(info); chap.appendChild(controls); chap.appendChild(videoWrap);
-          content.appendChild(chap);
-        });
-      } else {
-        const empty = document.createElement('div'); empty.style.padding='12px'; empty.style.color='var(--muted)'; empty.textContent = 'No hay capítulos añadidos.';
-        content.appendChild(empty);
-      }
-
-      seasonEl.appendChild(sHeader); seasonEl.appendChild(content);
-      seasonsWrap.appendChild(seasonEl);
-    });
-
-    animeDetailEl.appendChild(seasonsWrap);
-
-    wireSeasonToggles(animeDetailEl);
-    wirePlayerButtons(animeDetailEl);
-
-    showTab('anime', { preserve:true });
-    animeDetailEl.scrollIntoView({behavior:'smooth', block:'start'});
-  }
-
-  function wireSeasonToggles(root){
-    const seasons = root.querySelectorAll('.season');
-    seasons.forEach(seasonEl => {
-      const header = seasonEl.querySelector('.season-header');
-      const toggle = seasonEl.querySelector('.season-toggle');
-
-      seasonEl.classList.remove('open'); toggle.textContent='▼'; toggle.setAttribute('aria-expanded','false');
-
-      function open(){ seasonEl.classList.add('open'); toggle.textContent='▲'; toggle.setAttribute('aria-expanded','true'); }
-      function close(){
-        seasonEl.classList.remove('open'); toggle.textContent='▼'; toggle.setAttribute('aria-expanded','false');
-        const wraps = seasonEl.querySelectorAll('.video-wrap');
-        wraps.forEach(w => {
-          const ifr = w.querySelector('iframe');
-          if(ifr && ifr.src) ifr.src = '';
-          w.classList.remove('visible');
-          setTimeout(()=> w.style.display = 'none', 360); // hide after animation
-        });
-      }
-
-      header.addEventListener('click', ()=> seasonEl.classList.contains('open') ? close() : open());
-      toggle.addEventListener('click', (e)=>{ e.stopPropagation(); seasonEl.classList.contains('open') ? close() : open(); });
-      header.addEventListener('keydown', (e)=>{ if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); header.click(); }});
-    });
-  }
-
-  function wirePlayerButtons(root){
-    // rebind to avoid double listeners
-    root.querySelectorAll('.btn-player').forEach(orig=>{
-      const clone = orig.cloneNode(true);
-      orig.parentNode.replaceChild(clone, orig);
-    });
-
-    root.querySelectorAll('.btn-player').forEach((btn)=>{
+    tabButtons.forEach(btn=>{
       btn.addEventListener('click', ()=>{
-        const url = btn.dataset.player;
-        if(!url) return alert('Reproductor no disponible');
-        const chap = btn.closest('.chapter');
-        const wrap = chap.querySelector('.video-wrap');
-
-        // hide other wraps & stop their iframes
-        document.querySelectorAll('.video-wrap').forEach(w=>{
-          if(w !== wrap){
-            const ifr = w.querySelector('iframe');
-            if(ifr && ifr.src) ifr.src = '';
-            w.classList.remove('visible');
-            setTimeout(()=> w.style.display = 'none', 360);
-          }
-        });
-
-        // if already injected and visible, just scroll
-        if(wrap.querySelector('iframe')){
-          wrap.style.display = 'block';
-          requestAnimationFrame(()=> wrap.classList.add('visible'));
-          wrap.scrollIntoView({behavior:'smooth', block:'center'});
-          return;
-        }
-
-        // Inject the exact snippet using your PLAYER01 URL (keeps the 16:9 container)
-        const snippet = '<div class="embed-container" style="left: 0; width: 100%; height: 0; position: relative; padding-bottom: 56.25%;"><iframe src="' + url + '" style="top: 0; left: 0; width: 100%; height: 100%; position: absolute; border: 0;" allowfullscreen scrolling="no"></iframe></div>';
-
-        // Insert snippet and keep fallback element at end
-        wrap.innerHTML = snippet + wrap.innerHTML;
-
-        // show with animation
-        wrap.style.display = 'block';
-        setTimeout(()=> wrap.classList.add('visible'), 20);
-
-        // fallback button in case player doesn't load (uses direct URL)
-        let fallback = wrap.querySelector('.drive-fallback');
-        if(fallback && !fallback.querySelector('button')){
-          fallback.style.display = 'none';
-          const span = document.createElement('div');
-          span.textContent = 'Si el reproductor no carga, abrir en nueva pestaña:';
-          const openBtn = document.createElement('button');
-          openBtn.textContent = 'Abrir Reproductor';
-          openBtn.style.padding = '8px 12px';
-          openBtn.style.borderRadius = '8px';
-          openBtn.style.border = 'none';
-          openBtn.style.cursor = 'pointer';
-          openBtn.style.background = 'linear-gradient(90deg,var(--accent1),var(--accent2))';
-          openBtn.style.color = '#111';
-          openBtn.addEventListener('click', ()=> {
-            window.open(url, '_blank');
-          });
-          fallback.appendChild(span);
-          fallback.appendChild(openBtn);
-
-          // show fallback if iframe doesn't load in 6s
-          const iframe = wrap.querySelector('iframe');
-          const t = setTimeout(()=> { fallback.style.display = 'flex'; }, 6000);
-          if(iframe){
-            iframe.onload = function(){ clearTimeout(t); fallback.style.display = 'none'; iframe.onload = null; };
-          }
-        }
-
-        wrap.scrollIntoView({behavior:'smooth', block:'center'});
+        tabButtons.forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+        const id = btn.dataset.tab;
+        if(id==='animes'){ tabAnimes.style.display='grid'; tabJuegos.style.display='none'; }
+        else { tabAnimes.style.display='none'; tabJuegos.style.display='grid'; }
       });
     });
-  }
 
-  // Tabs wiring (keeps original behavior)
-  const tabAnimeBtn = document.getElementById('tab-anime');
-  const tabGamesBtn = document.getElementById('tab-games');
-  tabAnimeBtn.addEventListener('click', ()=> showTab('anime'));
-  tabGamesBtn.addEventListener('click', ()=> showTab('games'));
-  function showTab(tab, opts){
-    currentTab = tab;
-    if(tab === 'anime'){
-      tabAnimeBtn.classList.add('active'); tabGamesBtn.classList.remove('active');
-      document.getElementById('panelAnime').style.display = ''; document.getElementById('games-panel').style.display = 'none';
-      if(window.innerWidth >= 920) document.querySelector('aside').style.display = '';
-      if(!opts || !opts.preserve) selectAnime(currentAnimeId || animes[0].id);
-    } else {
-      tabGamesBtn.classList.add('active'); tabAnimeBtn.classList.remove('active');
-      document.getElementById('panelAnime').style.display = 'none'; document.getElementById('games-panel').style.display = '';
-      if(window.innerWidth >= 920) document.querySelector('aside').style.display = 'none';
+    // Estado
+    let currentScope = 'bd';
+    let currentAnimeKey = null;
+    let currentChapterId = null;
+
+    // Elementos dinámicos
+    const listBD = $('#list-bd');
+    const listTV = $('#list-tv');
+    const searchAll = $('#search-all');
+
+    const crumbs = $('#breadcrumbs');
+    const badges = $('#badges');
+    const categoryNote = $('#category-note');
+
+    const chaptersTitle = $('#chapters-title');
+    const chaptersList = $('#chapters-list');
+    const playerButtonsWrap = $('#player-buttons');
+    const viewer = $('#viewer');
+    // Contadores (UI)
+    const viewsCount = $('#views-count');
+    const likesCount = $('#likes-count');
+    const likeBtn    = $('#like-btn');
+    const likeHint   = $('#like-hint');
+    const extrasGrid = document.querySelector('#extras-grid');
+
+    // Audio único (opcional)
+    const audioBox = $('#audio-box');
+    const audioTitle = $('#audio-title');
+    const audioPlayer = $('#audio-player');
+    const audioSrc = $('#audio-src');
+
+    // Playlist UI
+    const playlistBox = $('#playlist-box');
+    const playlistCover = $('#playlist-cover');
+    const playlistTitle = $('#playlist-title');
+    const trackList = $('#track-list');
+    const btnPrev = $('#btn-prev');
+    const btnPlay = $('#btn-play');
+    const btnNext = $('#btn-next');
+    const playlistAudio = $('#playlist-audio');
+
+    /* Render Sidebar con filtro unificado */
+    function renderSidebar(filter = ""){
+      listBD.innerHTML = '';
+      listTV.innerHTML = '';
+
+      Object.keys(DATA.bd)
+        .filter(k => k.toLowerCase().includes(filter.toLowerCase()))
+        .forEach(key => listBD.appendChild(createSideItem('bd', key, 'BD RPmods')));
+
+      Object.keys(DATA.tv)
+        .filter(k => k.toLowerCase().includes(filter.toLowerCase()))
+        .forEach(key => listTV.appendChild(createSideItem('tv', key, 'Anime')));
+
+      const active = $(`.side-item[data-scope="${currentScope}"][data-key="${CSS.escape(currentAnimeKey||'')}"]`);
+      if(active) active.classList.add('active');
     }
-  }
 
-  // Init
-  buildSidebar();
-  selectAnime(currentAnimeId);
+    function createSideItem(scope, key, catLabel){
+      const item = document.createElement('div');
+      item.className = 'side-item';
+      item.dataset.scope = scope;
+      item.dataset.key = key;
 
-  // responsive
-  window.addEventListener('resize', ()=> {
-    if(window.innerWidth < 920) document.querySelector('aside').style.display = '';
-    else {
-      if(currentTab === 'anime') document.querySelector('aside').style.display = '';
-      else document.querySelector('aside').style.display = 'none';
+      const cover = (DATA[scope][key].cover || "").trim();
+
+      item.innerHTML = `
+        <div class="side-thumb" style="${cover ? `background-image:url('${cover}')` : ''}"></div>
+        <div class="side-info">
+          <div class="side-title">${key}</div>
+          <div class="side-sub">${catLabel}</div>
+        </div>
+      `;
+      item.addEventListener('click', ()=>{
+        $$('.side-item').forEach(i=>i.classList.remove('active'));
+        item.classList.add('active');
+        selectSeries(scope, key);
+      });
+      return item;
     }
-  });
 
-  // expose for debug
-  window.__rpmods = { animes, selectAnime, showTab };
-})();
-</script>
+    // === Contadores por serie ===
+    async function updateCounters(scope, key){
+      const slug = slugifySeries(scope, key);
+
+      // VISITAS
+      try {
+        const v = await hitView(slug);
+        viewsCount.textContent = v;
+      } catch(e){
+        viewsCount.textContent = '—';
+      }
+
+      // LIKES
+      likeHint.textContent = '';
+      likeBtn.disabled = false;
+      likeBtn.classList.remove('disabled');
+      likeBtn.onclick = null; // limpia handlers anteriores
+
+      try {
+        const currentLikes = await getLikes(slug);
+        likesCount.textContent = currentLikes;
+
+        if(hasLiked(slug)){
+          likeBtn.disabled = true;
+          likeBtn.classList.add('disabled');
+          likeHint.textContent = 'Ya diste like a esta serie en este dispositivo.';
+        } else {
+          likeBtn.onclick = async ()=>{
+            if(likeBtn.disabled) return;
+            likeBtn.disabled = true;
+            try {
+              const newVal = await addLike(slug);
+              likesCount.textContent = newVal;
+              markLiked(slug);
+              likeHint.textContent = '¡Gracias por tu like!';
+              likeBtn.classList.add('disabled');
+            } catch(e){
+              likeBtn.disabled = false;
+              likeHint.textContent = 'Error al dar like. Intenta de nuevo.';
+            }
+          };
+        }
+      } catch(e){
+        likesCount.textContent = '—';
+        likeHint.textContent = 'No se pudo cargar likes.';
+      }
+    }
+
+    function selectSeries(scope, key){
+      currentScope = scope;
+      currentAnimeKey = key;
+      currentChapterId = null;
+
+      const info = DATA[scope][key].info;
+
+      setCrumbs(scope, key);
+      setBadges(info);
+      setChapters(scope, key);
+      setExtras(scope, key);
+      setCategoryText(scope, key);
+      resetViewer(); // portada placeholder
+
+      // NUEVO: actualizar likes/visitas por serie
+      updateCounters(scope, key);
+    }
+
+    /* Texto por categoría y botón "Ir a Temporada 2" en BD RPmods */
+    function setCategoryText(scope, key){
+      const series = DATA[scope][key];
+      const baseText = scope==='bd'
+        ? `<strong>Anime BD RPmods:</strong> versiones Blu-ray mejoradas con añadidos especiales.`
+        : `<strong>Anime:</strong> ediciones estándar para streaming.`;
+
+      const hasT2 = (scope === 'bd') && series && series.season2Key && !!DATA.bd[series.season2Key];
+      const seasonLink = hasT2 ? ` <span id="season-jump" class="link-season">Ir a Temporada 2 ⤴</span>` : '';
+
+      categoryNote.innerHTML = baseText + seasonLink;
+
+      if(hasT2){
+        const jump = document.getElementById('season-jump');
+        jump.onclick = ()=>{
+          const t2Key = series.season2Key;
+          const target = document.querySelector(`.side-item[data-scope="bd"][data-key="${CSS.escape(t2Key)}"]`);
+          if(target) target.click(); else selectSeries('bd', t2Key);
+        };
+      }
+    }
+
+    function setCrumbs(scope, key){
+      const scopeTxt = scope==='bd' ? 'Anime BD RPmods' : 'Anime';
+      crumbs.textContent = `${scopeTxt} / ${key}`;
+    }
+
+    function setBadges(info){
+      badges.innerHTML = '';
+      const mk = (txt, primary=false)=>{
+        const s = document.createElement('span');
+        s.className = 'badge' + (primary?' primary':'');
+        s.textContent = txt; return s;
+      };
+      badges.appendChild(mk(`Audio: ${info.audio || '—'}`));
+      badges.appendChild(mk(`Subtítulos: ${info.subs || '—'}`));
+      badges.appendChild(mk(`OP/ED: ${info.oped || '—'}`));
+      badges.appendChild(mk(`Karaoke: ${info.karaoke || '—'}`));
+      badges.appendChild(mk(`Calidad: ${info.quality || '—'}`, true));
+    }
+
+    function setChapters(scope, key){
+      const series = DATA[scope][key];
+      chaptersTitle.textContent = `Capítulos — ${key}`;
+      chaptersList.innerHTML = '';
+      series.chapters.forEach((ch, idx)=>{
+        const row = document.createElement('div');
+        row.className = 'chap-item';
+        row.dataset.id = ch.id;
+        row.innerHTML = `
+          <div>
+            <div><strong>${ch.title}</strong></div>
+            <div class="small" style="opacity:.8">${ch.info || ''}</div>
+          </div>
+          <span class="tag">${ch.status ? ch.status : 'Disponible'}</span>
+        `;
+        row.addEventListener('click', ()=>{
+          $$('.chap-item').forEach(i=>i.classList.remove('active'));
+          row.classList.add('active');
+          currentChapterId = ch.id;
+          renderPlayerButtons(ch.players);
+          resetViewer(true);
+        });
+        chaptersList.appendChild(row);
+      });
+    }
+
+    function renderPlayerButtons(players){
+      playerButtonsWrap.innerHTML = '';
+      const defs = [
+        { key:'player1', label:'Reproductor 1' },
+        { key:'player2', label:'Reproductor 2' },
+        { key:'fb',     label:'Ver en Facebook' },
+        { key:'fb720',  label:'Reproductor Facebook 720p' },
+        { key:'player3',label:'Reproductor 3' },
+      ];
+
+      defs.forEach(def=>{
+        const url = (players && players[def.key]) ? players[def.key] : '';
+        const btn = document.createElement('button');
+        btn.className = 'btn ' + (url ? 'primary' : 'disabled');
+        if(!url) btn.setAttribute('disabled','');
+        btn.textContent = url ? def.label : `${def.label} (sin link)`;
+        btn.dataset.url = url || '';
+        btn.addEventListener('click', (e)=>{
+          const u = e.currentTarget.dataset.url;
+          if(!u) return;
+          // Solo "Ver en Facebook" abre nueva pestaña
+          if(def.key === 'fb'){
+            window.open(u, '_blank');
+          }else{
+            openInViewer(u);
+          }
+        });
+        playerButtonsWrap.appendChild(btn);
+      });
+    }
+
+    /* ====== EXTRAS ====== */
+    function setExtras(scope, key){
+      const series = DATA[scope][key];
+
+      // Audio único
+      if(series.extrasAudio && series.extrasAudio.url){
+        audioBox.style.display = 'flex';
+        audioTitle.textContent = series.extrasAudio.title || 'Banda sonora';
+        audioSrc.src = series.extrasAudio.url;
+        audioPlayer.load();
+      }else{
+        audioBox.style.display = 'none';
+        audioSrc.src = '';
+        audioPlayer.pause();
+      }
+
+      // Playlist:
+      const pl = series.extrasPlaylist;
+      const isBD = (scope === 'bd');
+
+      if(isBD){
+        renderPlaylist(`${scope}|${key}`, pl || { cover:'', title:'Playlist', tracks: [] }, { forceShow:true });
+      }else{
+        if(pl && Array.isArray(pl.tracks) && pl.tracks.length){
+          renderPlaylist(`${scope}|${key}`, pl, { forceShow:false });
+        }else{
+          playlistBox.style.display = 'none';
+          trackList.innerHTML = '';
+          playlistAudio.pause();
+        }
+      }
+
+      // Tarjetas extra (todas en NUEVA pestaña)
+      extrasGrid.innerHTML = '';
+
+      let extrasToRender = [];
+
+      if(isBD){
+        // Opening/Ending por serie
+        extrasToRender.push(
+          { id:"opening", title:"Opening Clean Version", url: series.openingUrl || "" },
+          { id:"ending",  title:"Ending Clean Version",  url: series.endingUrl  || "" },
+        );
+      }
+
+      // + extras propios
+      (series.extras || []).forEach(ex => extrasToRender.push(ex));
+
+      extrasToRender.forEach((ex)=>{
+        const card = document.createElement('div');
+        card.className = 'extra-card';
+        const hasUrl = !!(ex.url && ex.url.trim());
+        card.innerHTML = `
+          <div class="title">${ex.title}</div>
+          <div class="mini">Material exclusivo o adicional.</div>
+          <button class="btn ${!hasUrl ? 'disabled' : 'primary'}" ${!hasUrl ? 'disabled':''}
+                  data-url="${hasUrl ? ex.url : ''}">
+            ${hasUrl ? 'Abrir en nueva pestaña' : 'Sin enlace'}
+          </button>
+        `;
+        card.querySelector('button').addEventListener('click', (e)=>{
+          const url = e.currentTarget.dataset.url;
+          if(!url) return;
+          window.open(url, '_blank');
+        });
+        extrasGrid.appendChild(card);
+      });
+    }
+
+    function renderPlaylist(stateKey, pl, opts = { forceShow:false }){
+      playlistBox.style.display = 'grid';
+      playlistTitle.textContent = pl.title || 'Playlist';
+      playlistCover.style.backgroundImage =
+        (pl.cover && pl.cover.trim()) ? `url('${pl.cover}')` : 'linear-gradient(135deg, #1d1d1d, #0f0f0f)';
+
+      if(!renderPlaylist.state) renderPlaylist.state = {};
+      if(!renderPlaylist.state[stateKey]) renderPlaylist.state[stateKey] = { index:0, playing:false };
+      const state = renderPlaylist.state[stateKey];
+
+      const tracks = Array.isArray(pl.tracks) ? pl.tracks : [];
+      trackList.innerHTML = '';
+
+      if(tracks.length === 0){
+        const empty = document.createElement('div');
+        empty.className = 'track-item';
+        empty.innerHTML = `<div>Sin pistas por ahora</div><span class="tag">Próximamente</span>`;
+        trackList.appendChild(empty);
+        btnPrev.disabled = true; btnNext.disabled = true;
+        btnPrev.classList.add('disabled'); btnNext.classList.add('disabled');
+        btnPlay.textContent = '▶ Reproducir';
+        btnPlay.onclick = ()=>{};
+        playlistAudio.pause();
+        playlistAudio.removeAttribute('src');
+        return;
+      }
+
+      btnPrev.disabled = false; btnNext.disabled = false;
+      btnPrev.classList.remove('disabled'); btnNext.classList.remove('disabled');
+
+      tracks.forEach((t, i)=>{
+        const li = document.createElement('div');
+        li.className = 'track-item' + (i===state.index && state.playing ? ' active' : '');
+        li.dataset.index = i;
+        li.innerHTML = `<div>${t.title || ('Pista '+(i+1))}</div><span class="tag">${i===state.index && state.playing ? 'En curso' : 'Reproducir'}</span>`;
+        li.addEventListener('click', ()=>{
+          state.index = i; state.playing = true;
+          loadAndPlay({ tracks }, state);
+          refreshTrackList({ tracks }, state);
+        });
+        trackList.appendChild(li);
+      });
+
+      btnPrev.onclick = ()=>{
+        state.index = (state.index - 1 + tracks.length) % tracks.length;
+        state.playing = true;
+        loadAndPlay({ tracks }, state);
+        refreshTrackList({ tracks }, state);
+      };
+      btnNext.onclick = ()=>{
+        state.index = (state.index + 1) % tracks.length;
+        state.playing = true;
+        loadAndPlay({ tracks }, state);
+        refreshTrackList({ tracks }, state);
+      };
+      btnPlay.onclick = ()=>{
+        if(state.playing){
+          playlistAudio.pause(); state.playing = false; btnPlay.textContent = '▶ Reproducir';
+        }else{
+          if(!playlistAudio.src) loadAndPlay({ tracks }, state); else playlistAudio.play();
+          state.playing = true; btnPlay.textContent = '⏸ Pausar';
+        }
+        refreshTrackList({ tracks }, state);
+      };
+
+      playlistAudio.onended = ()=>{
+        state.index = (state.index + 1) % tracks.length;
+        state.playing = true;
+        loadAndPlay({ tracks }, state);
+        refreshTrackList({ tracks }, state);
+      };
+
+      if(!playlistAudio.src && tracks.length){
+        loadTrack({ tracks }, state);
+        btnPlay.textContent = '▶ Reproducir';
+      }
+      refreshTrackList({ tracks }, state);
+    }
+
+    function loadTrack(pl, state){
+      const track = pl.tracks[state.index];
+      playlistAudio.src = track.src || '';
+    }
+    function loadAndPlay(pl, state){
+      loadTrack(pl, state);
+      playlistAudio.play().catch(()=>{ /* autoplay bloqueado */ });
+      btnPlay.textContent = '⏸ Pausar';
+    }
+    function refreshTrackList(pl, state){
+      $$('#track-list .track-item').forEach((el, i)=>{
+        const active = (i===state.index && state.playing);
+        el.classList.toggle('active', active);
+        const tag = el.querySelector('.tag');
+        if(tag) tag.textContent = active ? 'En curso' : 'Reproducir';
+      });
+    }
+
+    /* ========= Visor ========= */
+    function resetViewer(showHint=false){
+      const cover = (DATA[currentScope][currentAnimeKey]?.cover || "").trim();
+      viewer.innerHTML = '';
+      if(cover){
+        const ph = document.createElement('div');
+        ph.className = 'cover-ph';
+        ph.style.backgroundImage = `url('${cover}')`;
+        viewer.appendChild(ph);
+      }
+      const hint = document.createElement('div');
+      hint.className = 'cover-hint';
+      hint.textContent = showHint ? 'Elige un reproductor para cargar el video aquí' : 'Selecciona un capítulo y un reproductor';
+      viewer.appendChild(hint);
+    }
+
+    function openInViewer(url){
+      if(!url) return;
+      viewer.innerHTML = `<iframe allow="autoplay; fullscreen" src="${url}"></iframe>`;
+    }
+
+    // Filtro unificado
+    searchAll.addEventListener('input', ()=> renderSidebar(searchAll.value));
+
+    // Inicialización
+    renderSidebar();
+    const firstBD = listBD.querySelector('.side-item');
+    if(firstBD){ firstBD.click(); }
+  </script>
 </body>
 </html>
